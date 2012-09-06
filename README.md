@@ -1,6 +1,8 @@
 Installation
 ------------
 
+    cp include/config.inc.php-sample include/config.inc.php
+
     cd scripts
 
 Extract Trang binary to current directory:
