@@ -100,10 +100,10 @@
 				?><li>
 				<ul>
 				<li class="title">
-				<a <?=$style['dependent'] ? ' class="dependent" ' : ''
-					?>href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a>
+				<a <?=$style['dependent'] ? 'class="dependent" ' : ''
+					?>href="<?=htmlentities($href)?><?=strpos($href, '?') === false ? '?' : '&amp;'?>install=1"><?=htmlspecialchars($style['title'])?></a>
 				</li>
-				<li class="install"><a href="<?=htmlentities($href)?><?=strpos($href, '?') === false ? '?' : '&amp;'?>install=1">[Install]</a></li>
+				<li class="source"><a href="<?=htmlentities($href)?>">[View Source]</a></li>
 				<li><ul class="metadata"><li class="updated"><?=$date?></li><?
 					if (!$style['valid']) {
 						?><li class="invalid">Invalid</li><?

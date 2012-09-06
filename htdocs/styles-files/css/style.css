@@ -152,7 +152,8 @@ h2 {
 	margin-right: .25em;
 }
 
-.styleList .install {
+.styleList .source {
+	margin-left: .5em;
 	font-size: .85em;
 }
 
