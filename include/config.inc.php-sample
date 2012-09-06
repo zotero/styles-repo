@@ -1,0 +1,7 @@
+<?
+define('CITEPROC_NODE_URL', 'http://localhost:8082/');
+
+define('ROOT_PATH', dirname(dirname(__FILE__)) . '/');
+define('STYLES_PATH', ROOT_PATH . 'styles/local/');
+define('STYLES_URI_PREFIX', 'http://www.zotero.org/styles/');
+?>

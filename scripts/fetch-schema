@@ -1,0 +1,13 @@
+#!/bin/sh
+DIR="`dirname $0`/schema"
+SCHEMA_URL="https://github.com/citation-style-language/schema/raw/v1.0.1/"
+
+cd $DIR
+for i in csl-categories csl-data csl-terms csl-types csl-variables csl;
+do
+	wget -q --no-check-certificate "${SCHEMA_URL}${i}.rnc"
+done
+
+/usr/bin/java -jar ../trang.jar csl.rnc csl.rng
+
+rm csl*.rnc

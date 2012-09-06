@@ -1,0 +1,5 @@
+include/config.inc.php
+scripts/schema/*
+scripts/trang.jar
+htdocs/styles-files/previews/*.html
+!htdocs/styles-files/previews/index.html

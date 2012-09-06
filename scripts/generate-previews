@@ -1,0 +1,200 @@
+#!/usr/bin/php
+<?
+/*
+    ***** BEGIN LICENSE BLOCK *****
+    
+    This file is part of the Zotero Style Repository.
+    
+    Copyright © 2011–2012 Center for History and New Media
+                          George Mason University, Fairfax, Virginia, USA
+                          http://zotero.org
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+    
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+    ***** END LICENSE BLOCK *****
+*/
+
+error_reporting(E_ALL);
+ini_set("display_errors", true);
+
+ini_set('include_path', '.:' . dirname(dirname(__FILE__)) . '/include');
+require('config.inc.php');
+require('Styles.inc.php');
+require('Styles_Repo.inc.php');
+require('Styles_Preview.inc.php');
+
+$singleStyle = !empty($argv[1]) ? $argv[1] : false;
+
+$styles = Styles_Repo::getAllStyles();
+
+$independents = array();
+$dependents = array();
+$previews = array();
+
+$data = json_decode(file_get_contents(ROOT_PATH . 'include/data/previews.json'));
+
+$previewsDir = ROOT_PATH . 'htdocs/styles-files/previews/';
+if (!is_dir($previewsDir)) {
+	throw new Exception("Previews directory not found");
+}
+// Create some directories if they don't exist
+$previewCitationDir = $previewsDir . 'citation/';
+if (!is_dir($previewCitationDir)) {
+	mkdir($previewCitationDir);
+}
+if (!is_dir($previewCitationDir . 'dependent')) {
+	mkdir($previewCitationDir . 'dependent');
+}
+$previewBibDir = $previewsDir . 'bib/';
+if (!is_dir($previewBibDir)) {
+	mkdir($previewBibDir);
+}
+if (!is_dir($previewBibDir . 'dependent')) {
+	mkdir($previewBibDir . 'dependent');
+}
+
+// Update independents
+foreach ($styles as $style) {
+	$name = $style['name'];
+	
+	// Save dependents for later
+	if ($style['dependent']) {
+		$xml = new SimpleXMLElement($style['code']);
+		$xml->registerXPathNamespace("csl", "http://purl.org/net/xbiblio/csl");
+		$parent = $xml->xpath("/csl:style/csl:info/csl:link[@rel='independent-parent']");
+		if ($parent) {
+			$parentName = substr(strrchr((string) $parent[0]['href'], '/'), 1);
+			$dependents[] = array(
+				'name' => $style['name'],
+				'parentName' => $parentName
+			);
+			continue;
+		}
+	}
+	
+	Styles::log("============================\n");
+	Styles::log("Generating preview for $name\n");
+	
+	// Get the preview
+	try {
+		$previewCitations = CSLPreview::getCitations($style['code'], $data);
+		$previewBib = CSLPreview::getBibliography($style['code'], $data);
+	}
+	catch (Exception $e) {
+		var_dump($e);
+		$preview = 'Error generating preview';
+		continue;
+	}
+	foreach ($previewCitations as $citation) {
+		Styles::log($citation . "\n");
+	}
+	Styles::log($previewBib . "\n");
+	
+	Styles_Repo::setPreviewCitations($name, $previewCitations);
+	Styles_Repo::setPreviewBibliography($name, $previewBib);
+	$previews[$name]['citation'] = $previewCitations;
+	$previews[$name]['bib'] = $previewBib;
+	$independents[$name] = true;
+}
+
+
+// Update dependents with parent previews
+foreach ($dependents as $dependent) {
+	$name = $dependent['name'];
+	$parentName = $dependent['parentName'];
+	
+	echo "============================\n\n";
+	echo "Generating preview for $name (dep)\n\n";
+	
+	if (isset($previews[$parentName])) {
+		$previewCitations = $previews[$parentName]['citation'];
+		$previewBib = $previews[$parentName]['bib'];
+	}
+	else {
+		if ($singleStyle) {
+			$previewCitations = Styles_Repo::getPreviewCitations($parentName);
+			$previewBib = Styles_Repo::getPreviewBibliography($parentName);
+		}
+		
+		if (empty($previewCitations) || empty($previewBib)) {
+			Styles::log("Preview of parent $parentName not found");
+			continue;
+		}
+	}
+	
+	Styles_Repo::setPreviewCitations($name, $previewCitations, true);
+	Styles_Repo::setPreviewBibliography($name, $previewBib, true);
+	$dependents[$name] = true;
+}
+
+if ($singleStyle) {
+	exit;
+}
+
+if (!$dependents && !$independents) {
+	Styles::log("\nError generating previews");
+	exit;
+}
+
+//
+// Delete files we didn't just generate
+//
+$dir = $previewCitationDir;
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) != false) {
+		if (preg_match('/^(.+)\.json$/', $file, $matches)) {
+			if (!in_array($matches[1], $independents)) {
+				Styles::log("Deleting citation preview $file");
+				unlink($dir . $file);
+			}
+		}
+	}
+}
+
+$dir = $previewCitationDir . 'dependent/';
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) != false) {
+		if (preg_match('/^(.+)\.json$/', $file, $matches)) {
+			if (!in_array($matches[1], $dependents)) {
+				Styles::log("Deleting citation preview dependents/$file");
+				unlink($dir . $file);
+			}
+		}
+	}
+}
+
+$dir = $previewBibDir;
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) != false) {
+		if (preg_match('/^(.+)\.html$/', $file, $matches)) {
+			if (!in_array($matches[1], $independents)) {
+				Styles::log("Deleting bib preview $file");
+				unlink($dir . $file);
+			}
+		}
+	}
+}
+
+$dir = $previewBibDir . 'dependent/';
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) != false) {
+		if (preg_match('/^(.+)\.html$/', $file, $matches)) {
+			if (!in_array($matches[1], $dependents)) {
+				Styles::log("Deleting bib preview dependents/$file");
+				unlink($dir . $file);
+			}
+		}
+	}
+}
+?>

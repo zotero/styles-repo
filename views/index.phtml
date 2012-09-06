@@ -1,0 +1,131 @@
+<? /*
+    ***** BEGIN LICENSE BLOCK *****
+    
+    This file is part of the Zotero Style Repository.
+    
+    Copyright © 2011–2012 Center for History and New Media
+                          George Mason University, Fairfax, Virginia, USA
+                          http://zotero.org
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+    
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+    ***** END LICENSE BLOCK *****
+*/
+?><!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<title>Zotero Style Repository</title>
+		
+		<link rel="stylesheet" type="text/css" href="<?=staticFile('/styles-files/css/jquery.qtip.css')?>"/>
+		<link rel="stylesheet" type="text/css" href="<?=staticFile('/styles-files/css/style.css')?>"/>
+	</head>
+	
+	<body>
+		<div id="stylesPane">
+			<h1>Zotero Style Repository</h1>
+			
+			<p>Here you can find citation styles for use with <a href="http://www.zotero.org/">Zotero</a> 2.1 (or higher) and other <a href="http://citationstyles.org/">CSL</a> 1.0–compatible clients. If you can't find what you need here, you can <a href="http://www.zotero.org/support/dev/citation_styles">create your own citation style</a>.</p>
+			
+			<div id="searchPane" style="display: none">
+				<h2>Style Search</h2>
+				
+				<div id="searchFields">
+					<p id="searchFieldBox"><input id="searchField" type="search" size="25" placeholder="Title Search" autofocus="autofocus" onkeyup="ZSR.Search.onSearchKeyUp(event, this)" onkeypress="ZSR.Search.onSearchKeyPress(event)" onchange="ZSR.Search.onChange(this)"/></p>
+					<p id="dependentToggleBox"><label title="Check this option to hide dependent styles that differ in name only."><input id="dependentToggle" type="checkbox" onclick="ZSR.Search.startSearch()"/>Show only unique styles</label></p>
+					
+					<div id="formatsBox" class="categoryBox">
+						<p>Format:</p>
+						<ul id="formats"><li class="loading">Loading…</li></ul>
+						<div style="clear:left"></div>
+					</div>
+					
+					<div id="fieldsBox" class="categoryBox">
+						<p>Fields:</p>
+						<ul id="fields"><li class="loading">Loading…</li></ul>
+						<div style="clear:left"></div>
+					</div>
+				</div>
+				
+				<div id="loading" style="visibility: hidden">Loading…</div>
+				<div style="clear:left"></div>
+			</div>
+			
+			<!-- If JavaScript is available, show the search pane -->
+			<script>
+				document.getElementById('searchPane').style.display = 'block';
+			</script>
+			
+			<p id="styleCount"><?
+				switch ($numStyles) {
+					case "0":
+						echo "No styles found";
+						break;
+					
+					case "1":
+						echo "1 style found:";
+						break;
+					
+					default:
+						echo $numStyles . " styles found:";
+				}
+			?></p>
+			
+			<ul class="styleList"><?
+			foreach ($styleList as $style) {
+				date_default_timezone_set('UTC');
+				$time = strtotime($style['updated']);
+				$date = date("Y-m-d H:i:s", $time);
+				
+				// Generate href to style
+				$href = $uri . (substr($uri, -1) == '/' ? '' : '/') . $style['name'];
+				
+				if (!empty($style['disambiguate']) && !empty($style['dependent'])) {
+					$href .= '?dep=1';
+				}
+				
+				$styleName = $style['name'];
+				
+				?><li>
+				<ul>
+				<li class="title">
+				<a <?=$style['dependent'] ? ' class="dependent" ' : ''
+					?>href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a>
+				</li>
+				<li class="install"><a href="<?=htmlentities($href)?><?=strpos($href, '?') === false ? '?' : '&amp;'?>install=1">[Install]</a></li>
+				<li><ul class="metadata"><li class="updated"><?=$date?></li><?
+					if (!$style['valid']) {
+						?><li class="invalid">Invalid</li><?
+					}
+				?></ul></li>
+				</ul>
+				</li><?
+			} ?></ul>
+		</div>
+		
+		<script>
+			var styleData = <?=$styleDataJSON?>;
+		</script>
+		<script src="/styles-files/js/jquery-1.7.1.min.js"></script>
+		<script src="<?=staticFile('/styles-files/js/jquery.qtip.min.js')?>"></script>
+		<!--<script src="<?=staticFile('/styles-files/js/quickpager.jquery.js')?>"></script>-->
+		
+		<script src="<?=staticFile('/styles-files/js/js.js')?>"></script>
+		<script>
+			$().ready(function() {
+				ZSR.Search.init();
+			});
+		</script>
+	</body>
+</html>

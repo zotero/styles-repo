@@ -1,0 +1,16 @@
+#!/usr/bin/php
+<?
+error_reporting(E_ALL);
+ini_set("display_errors", true);
+
+ini_set('include_path', '.:' . dirname(dirname(__FILE__)) . '/include');
+
+require('config.inc.php');
+require('Styles.inc.php');
+require('Styles_Preview.inc.php');
+
+$data = json_decode(file_get_contents(ROOT_PATH . 'include/data/previews.json'));
+$bbCode = file_get_contents(ROOT_PATH . 'include/bluebook-19th.csl');
+$preview = CSLPreview::getBibliography($bbCode, $data);
+echo $preview;
+?>

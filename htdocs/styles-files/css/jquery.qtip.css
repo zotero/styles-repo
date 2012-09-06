@@ -1,0 +1,56 @@
+/*
+* qTip2 - Pretty powerful tooltips
+* http://craigsworks.com/projects/qtip2/
+*
+* Version: nightly
+* Copyright 2009-2010 Craig Michael Thompson - http://craigsworks.com
+*
+* Dual licensed under MIT or GPLv2 licenses
+*   http://en.wikipedia.org/wiki/MIT_License
+*   http://en.wikipedia.org/wiki/GNU_General_Public_License
+*
+* Date: Tue May 10 05:18:15 PDT 2011
+*/
+
+/* Fluid class for determining actual width in IE */
+.ui-tooltip-fluid{
+	display: block;
+	visibility: hidden;
+	position: static !important;
+	float: left !important;
+}
+
+.ui-tooltip, .qtip{
+	position: absolute;
+	left: -28000px;
+	top: -28000px;
+	display: none;
+
+	max-width: 700px;
+	min-width: 50px;
+}
+
+.ui-tooltip-content{
+	position: relative;
+	padding: 5px 9px;
+	overflow: hidden;
+	
+	border-width: 1px;
+	border-style: solid;
+	
+	text-align: left;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+
+.ui-tooltip-content{
+	border: 2px #000 solid;
+	background: #fff;
+	color: #000;
+}
+
+.ui-tooltip-content{
+	-webkit-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);
+	-moz-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);
+	box-shadow:1px 2px 4px 1px rgba(0,0,0,0.15);
+}
