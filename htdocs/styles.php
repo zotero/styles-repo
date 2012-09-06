@@ -42,7 +42,7 @@ if (!isset($PATH_INFO) || $PATH_INFO[0] == '') {
 if (isset($PATH_INFO[0])) {
 	$name = $PATH_INFO[0];
 	$dependent = !empty($_GET['dep']);
-	$install = !empty($_GET['install']);
+	$source = !empty($_GET['source']);
 	$csl = Styles_Repo::getCode($name, $dependent);
 	// Dependent flag is optional
 	if (!$csl) {
@@ -59,11 +59,11 @@ else {
 
 // Single style
 if (!empty($csl)) {
-	if (!empty($install)) {
-		header('Content-Type: text/x-csl; charset=utf-8');
+	if (!empty($source)) {
+		header('Content-Type: text/xml');
 	}
 	else {
-		header('Content-Type: text/xml');
+		header('Content-Type: text/x-csl; charset=utf-8');
 	}
 	header("Content-Disposition: filename=$name.csl");
 	echo $csl;

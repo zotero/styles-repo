@@ -47,7 +47,7 @@ ZSR.Search = (function () {
 		// Filter the style list based on search parameters
 		var uls = $("ul.styleList li.title a").each(function () {
 			var container = $(this).parent().parent().parent();
-			var name = $(this).attr("href").match(/([^\/]+(?:\?dep=1)?)[&\?]install=1$/)[1];
+			var name = $(this).attr("href").match(/([^\/]+(?:\?dep=1)?)$/)[0];
 			var dependent = $(this).hasClass("dependent");
 			var data = styleData[dependent ? 'dependent' : 'independent'][name];
 			
@@ -226,7 +226,7 @@ ZSR.Search = (function () {
 			console.log("Adding qtips");
 			var t = new Date();
 			$("ul.styleList li.title a").each(function() {
-				var name = $(this).attr("href").match(/([^\/]+(?:\?dep=1)?)[&\?]install=1$/)[1];
+				var name = $(this).attr("href").match(/([^\/]+(?:\?dep=1)?)$/)[0];
 				var dependent = $(this).hasClass("dependent");
 				
 				$(this).qtip({
