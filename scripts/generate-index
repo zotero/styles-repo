@@ -50,6 +50,9 @@ class CSL_Index_Generator {
 		}
 		if (!file_exists(self::$originalStylesPath . ".git")) {
 			chdir(self::$originalStylesPath);
+			if (file_exists(".gitignore")) {
+				unlink(".gitignore");
+			}
 			exec("git clone git://github.com/citation-style-language/styles.git .");
 		}
 		if (!file_exists(self::$localStylesPath . "dependent")) {
