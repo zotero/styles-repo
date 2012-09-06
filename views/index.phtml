@@ -1,4 +1,4 @@
-<? /*
+<?php /*
     ***** BEGIN LICENSE BLOCK *****
     
     This file is part of the Zotero Style Repository.
@@ -67,7 +67,7 @@
 				document.getElementById('searchPane').style.display = 'block';
 			</script>
 			
-			<p id="styleCount"><?
+			<p id="styleCount"><?php
 				switch ($numStyles) {
 					case "0":
 						echo "No styles found";
@@ -82,7 +82,7 @@
 				}
 			?></p>
 			
-			<ul class="styleList"><?
+			<ul class="styleList"><?php
 			foreach ($styleList as $style) {
 				date_default_timezone_set('UTC');
 				$time = strtotime($style['updated']);
@@ -104,13 +104,13 @@
 					?>href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a>
 				</li>
 				<li class="source"><a href="<?=htmlentities($href)?><?=strpos($href, '?') === false ? '?' : '&amp;'?>source=1">[View Source]</a></li>
-				<li><ul class="metadata"><li class="updated"><?=$date?></li><?
+				<li><ul class="metadata"><li class="updated"><?=$date?></li><?php
 					if (!$style['valid']) {
-						?><li class="invalid">Invalid</li><?
+						?><li class="invalid">Invalid</li><?php
 					}
 				?></ul></li>
 				</ul>
-				</li><?
+				</li><?php
 			} ?></ul>
 		</div>
 		

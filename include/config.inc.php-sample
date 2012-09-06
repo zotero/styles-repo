@@ -1,4 +1,4 @@
-<?
+<?php
 define('CITEPROC_NODE_URL', 'http://localhost:8082/');
 
 define('ROOT_PATH', dirname(dirname(__FILE__)) . '/');
