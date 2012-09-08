@@ -129,59 +129,23 @@ h2 {
 /**
  * Style list
  */
-.styleList ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: inline;
-}
-
-.styleList .metadata {
-	/*visibility: hidden;*/
-}
-
 .styleList li {
 	margin-bottom: .6em;
 }
 
-.styleList li li {
-	display: inline;
-}
-
-.styleList li li:not(:last-child) {
-	margin-right: .25em;
-}
-
-.styleList .source {
-	margin-left: .5em;
-	font-size: .85em;
-}
-
-.styleList .disabled {
-	color: gray;
-	text-decoration: line-through
+#view-source {
+	margin: 0 0 0 1.5em;
+	font-size: x-small;
+	vertical-align: middle;
+	line-height: .95em;
 }
 
 .styleList .metadata {
-	display: inline;
 	font-size: .85em;
 	margin-left: 1.5em;
 }
 
-.styleList .metadata:before {
-	content: "(";
-}
-
-.styleList .metadata li:not(:last-child):after {
-	content: ", ";
-	color: #000;
-}
-
-.styleList .metadata:after {
-	content: ")";
-}
-
-.styleList li .invalid {
+.styleList .invalid {
 	color: red;
 }
 

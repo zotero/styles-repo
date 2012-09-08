@@ -45,16 +45,18 @@ ZSR.Search = (function () {
 		var showDepStyles = !document.getElementById('dependentToggle').checked;
 		
 		// Filter the style list based on search parameters
-		var uls = $("ul.styleList li.title a").each(function () {
-			var container = $(this).parent().parent().parent();
+		var uls = $("ul.styleList a.title").each(function () {
+			var container = $(this).parent();
 			var name = $(this).attr("href").match(/([^\/]+(?:\?dep=1)?)$/)[0];
-			var dependent = $(this).hasClass("dependent");
-			var data = styleData[dependent ? 'dependent' : 'independent'][name];
+			var data = container.data();
+			if (data.fields && typeof data.fields == 'string') {
+				data.fields = data.fields.split(",");
+			}
 			
 			var show = true;
 			
 			// Hide dependent styles if unchecked
-			if (!showDepStyles && $(this).hasClass("dependent")) {
+			if (!showDepStyles && data.dependent) {
 				show = false;
 			}
 			
@@ -68,14 +70,14 @@ ZSR.Search = (function () {
 			// Hide styles that don't match the selected categories
 			if (show) {
 				if (selectedFormat) {
-					if (!data.cat || data.cat.format != selectedFormat) {
+					if (data.format != selectedFormat) {
 						show = false;
 					}
 				}
 				
 				if (show) {
 					for (var i in selectedFields) {
-						if (!data.cat || data.cat.fields.indexOf(selectedFields[i]) == -1) {
+						if (data.fields.indexOf(selectedFields[i]) == -1) {
 							show = false;
 							break;
 						}
@@ -88,19 +90,19 @@ ZSR.Search = (function () {
 				numDisplayedStyles++;
 				
 				// Count citation formats
-				if (data.cat.format) {
-					if (!formatCounts[data.cat.format]) {
-						formatCounts[data.cat.format] = 1;
+				if (data.format) {
+					if (!formatCounts[data.format]) {
+						formatCounts[data.format] = 1;
 					}
 					else {
-						formatCounts[data.cat.format]++;
+						formatCounts[data.format]++;
 					}
 				}
 				
 				// Count fields
-				if (data.cat.fields) {
-					for (var i in data.cat.fields) {
-						var field = data.cat.fields[i];
+				if (data.fields) {
+					for (var i in data.fields) {
+						var field = data.fields[i];
 						if (!fieldCounts[field]) {
 							fieldCounts[field] = 1;
 						}
@@ -212,22 +214,31 @@ ZSR.Search = (function () {
 		init: function () {
 			updateSearchResults();
 			
-			/*console.log("Adding hover");
-			$("ul.styleList a").hover(
+			$("ul.styleList > li").hover(
 				function () {
-					$(this).after($("#actions").show());
+					// Show "View Source" button
+					var button = $("#view-source");
+					var href = $(this).find("a").attr('href');
+					href += (href.indexOf('?') == -1 ? "?" : "&") + "source=1";
+					button.on("click", function () {
+						window.location.href = href;
+					});
+					$(this).append(button.show());
 				},
 				function () {
-					$("#actions").hide();
+					$("#view-source").off("click").hide();
 				}
-			);*/
+			);
 			
-			
-			console.log("Adding qtips");
-			var t = new Date();
-			$("ul.styleList li.title a").each(function() {
+			$("ul.styleList a.title").hover(function() {
+				if ($(this).data("qtipped")) {
+					return;
+				}
+				
+				var container = $(this).parent();
+				
 				var name = $(this).attr("href").match(/([^\/]+(?:\?dep=1)?)$/)[0];
-				var dependent = $(this).hasClass("dependent");
+				var dependent = !!container.data("dependent");
 				
 				$(this).qtip({
 					content: {
@@ -251,11 +262,13 @@ ZSR.Search = (function () {
 					},
 					show: {
 						solo: true,
-						effect: false
+						effect: false,
+						ready: true
 					}
 				});
+				
+				$(this).data("qtipped", 1)
 			});
-			console.log((new Date() - t) + "ms");
 		},
 		
 		onSearchKeyUp: function (event, input) {

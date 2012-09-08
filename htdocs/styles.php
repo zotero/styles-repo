@@ -53,7 +53,6 @@ if (isset($PATH_INFO[0])) {
 else {
 	$styleList = Styles_Repo::getAllStyles();
 	$numStyles = number_format(sizeOf($styleList));
-	$styleDataJSON = Styles_Repo::getStyleDataJSON();
 }
 
 

@@ -202,43 +202,6 @@ class Styles_Repo {
 	}
 	
 	
-	public static function getStyleDataJSON() {
-		$styles = self::getAllStyles();
-		
-		$data = array(
-			'independent' => array(),
-			'dependent' => array()
-		);
-		foreach ($styles as $style) {
-			$name = $style['name'];
-			
-			$target = empty($style['dependent']) ? 'independent' : 'dependent';
-			
-			$obj = array();
-			
-			//$obj['ts'] = strtotime($style['updated']);
-			if (!$style['valid']) {
-				//$obj['invalid'] = true;
-			}
-			
-			if (empty($style['categories'])) {
-				$obj['cat'] = false;
-			}
-			else {
-				$obj['cat'] = $style['categories'];
-			}
-			
-			if (!empty($style['disambiguate'])) {
-				$obj['disambiguate'] = 1;
-			}
-			
-			$data[$target][$name] = $obj;
-		}
-		
-		return json_encode($data);
-	}
-	
-	
 	private static function parseStyle($name, $code, $dependent=0) {
 		try {
 			$xml = new SimpleXMLElement($code);

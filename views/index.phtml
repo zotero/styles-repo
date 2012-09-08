@@ -82,8 +82,8 @@
 				}
 			?></p>
 			
-			<ul class="styleList"><?php
-			foreach ($styleList as $style) {
+			<ul class="styleList">
+			<?php foreach ($styleList as $style) {
 				date_default_timezone_set('UTC');
 				$time = strtotime($style['updated']);
 				$date = date("Y-m-d H:i:s", $time);
@@ -97,26 +97,23 @@
 				
 				$styleName = $style['name'];
 				
-				?><li>
-				<ul>
-				<li class="title">
-				<a <?=$style['dependent'] ? 'class="dependent" ' : ''
-					?>href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a>
-				</li>
-				<li class="source"><a href="<?=htmlentities($href)?><?=strpos($href, '?') === false ? '?' : '&amp;'?>source=1">[View Source]</a></li>
-				<li><ul class="metadata"><li class="updated"><?=$date?></li><?php
+				?><li
+					data-format="<?=$style['categories']['format']?>"
+					data-fields="<?=implode(",",$style['categories']['fields'])?>"
+					<?=$style['dependent'] ? 'data-dependent="1"' : ''?>
+					<?=$style['disambiguate'] ? 'data-disambiguate="1"' : ''?>>
+				<a class="title" href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a>
+				<span class="metadata">(<?=$date?><?php
 					if (!$style['valid']) {
-						?><li class="invalid">Invalid</li><?php
+						?>, <span class="invalid">Invalid</span><?php
 					}
-				?></ul></li>
-				</ul>
+				?>)</span>
 				</li><?php
 			} ?></ul>
 		</div>
 		
-		<script>
-			var styleData = <?=$styleDataJSON?>;
-		</script>
+		<button id="view-source" style="display: none">View Source</button>
+		
 		<script src="/styles-files/js/jquery-1.7.1.min.js"></script>
 		<script src="<?=staticFile('/styles-files/js/jquery.qtip.min.js')?>"></script>
 		<!--<script src="<?=staticFile('/styles-files/js/quickpager.jquery.js')?>"></script>-->
