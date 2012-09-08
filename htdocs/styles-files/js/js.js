@@ -37,7 +37,7 @@ ZSR.Search = (function () {
 		var t = new Date();
 		
 		var val = document.getElementById('searchField').value;
-		var valLower = val.toLowerCase();
+		var searchWords = val.toLowerCase().split(" ");
 		var numDisplayedStyles = 0;
 		var formatCounts = {};
 		var fieldCounts = {};
@@ -62,8 +62,13 @@ ZSR.Search = (function () {
 			
 			// Hide styles that don't match the search text
 			if (show) {
-				if (name.indexOf(valLower) == -1 && $(this).text().toLowerCase().indexOf(valLower) == -1) {
-					show = false;
+				for (var i in searchWords) {
+					var word = searchWords[i];
+					// If any search words don't appear in name or title, it's not a match
+					if (name.indexOf(word) == -1 && $(this).text().toLowerCase().indexOf(word) == -1) {
+						show = false;
+						break;
+					}
 				}
 			}
 			
