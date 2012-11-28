@@ -31,12 +31,14 @@ ini_set("display_errors", true);
 ini_set('include_path', '.:' . dirname(dirname(__FILE__)) . '/include');
 require('config.inc.php');
 require('Styles.inc.php');
+require("Styles_Repo.inc.php");
 
 class CSL_Index_Generator {
 	private static $initialized = false;
 	private static $originalStylesPath;
 	private static $localStylesPath;
 	private static $dataPath;
+	private static $tmpPath;
 	
 	private static function init() {
 		self::$initialized = true;
@@ -44,6 +46,7 @@ class CSL_Index_Generator {
 		self::$originalStylesPath = ROOT_PATH . "styles/original/";
 		self::$localStylesPath = ROOT_PATH . "styles/local/";
 		self::$dataPath = ROOT_PATH . "styles/data/";
+		self::$tmpPath = ROOT_PATH . "tmp/";
 		
 		if (!file_exists(self::$originalStylesPath)) {
 			throw new Exception("Original styles directory not found");
@@ -160,6 +163,15 @@ class CSL_Index_Generator {
 			}
 		}
 		closedir($dir);
+		
+		// Save 'lastModified' and 'etag' values for caching
+		try {
+			$styleList = Styles_Repo::getAllStyles();
+			Styles_Repo::setCacheValues($styleList);
+		}
+		catch (Exception $e) {
+			error_log($e);
+		}
 	}
 	
 	

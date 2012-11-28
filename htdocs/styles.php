@@ -51,7 +51,20 @@ if (isset($PATH_INFO[0])) {
 }
 // Style list
 else {
+	$cacheValues = Styles_Repo::getCacheValues();
+	
+	if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+				&& $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $cacheValues['lastModified'])
+			|| (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+				&& trim($_SERVER['HTTP_IF_NONE_MATCH']) == $cacheValues['etag'])) {
+		header("HTTP/1.1 304 Not Modified");
+		exit;
+	}
+	
 	$styleList = Styles_Repo::getAllStyles();
+	
+	header("Last-Modified: {$cacheValues['lastModified']}");
+	header('ETag: "' . $cacheValues['etag'] . '"');
 	$numStyles = number_format(sizeOf($styleList));
 }
 

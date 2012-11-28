@@ -88,6 +88,35 @@ class Styles_Repo {
 	}
 	
 	
+	public static function getCacheValues() {
+		$cacheFile = ROOT_PATH . "tmp/cache";
+		if (!file_exists($cacheFile)) {
+			return false;
+		}
+		return json_decode(file_get_contents($cacheFile), true);
+	}
+	
+	
+	public static function setCacheValues($styleList) {
+		$cacheFile = ROOT_PATH . "tmp/cache";
+		$data = array();
+		$lastModified = '';
+		foreach ($styleList as $style) {
+			if ($style['updated'] > $lastModified) {
+				$lastModified = $style['updated'];
+			}
+			$data[] = $style['name'] . $style['updated'];
+		}
+		$lastModified = gmdate("D, d M Y H:i:s", strtotime($lastModified)) . " GMT";
+		$etag = md5(implode('', $data));
+		$json = json_encode(array(
+			'lastModified' => $lastModified,
+			'etag' => $etag
+		));
+		file_put_contents($cacheFile, $json);
+	}
+	
+	
 	public static function getFilePath($name, $dependent=false) {
 		// TEMP
 		if ($name == 'bluebook-19th') {
