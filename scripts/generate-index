@@ -38,7 +38,6 @@ class CSL_Index_Generator {
 	private static $originalStylesPath;
 	private static $localStylesPath;
 	private static $dataPath;
-	private static $tmpPath;
 	
 	private static function init() {
 		self::$initialized = true;
@@ -46,7 +45,6 @@ class CSL_Index_Generator {
 		self::$originalStylesPath = ROOT_PATH . "styles/original/";
 		self::$localStylesPath = ROOT_PATH . "styles/local/";
 		self::$dataPath = ROOT_PATH . "styles/data/";
-		self::$tmpPath = ROOT_PATH . "tmp/";
 		
 		if (!file_exists(self::$originalStylesPath)) {
 			throw new Exception("Original styles directory not found");
@@ -110,10 +108,7 @@ class CSL_Index_Generator {
 		$path = self::$localStylesPath;
 		$dir = opendir($path);
 		while (false !== ($filename = readdir($dir))) {
-			if (strpos($filename, ".") !== false) {
-				continue;
-			}
-			if ($filename == 'dependent') {
+			if (strpos($filename, ".") !== false || $filename == 'dependent') {
 				continue;
 			}
 			if (!in_array($filename, $keep['independent'])) {
@@ -143,11 +138,14 @@ class CSL_Index_Generator {
 		$path = self::$dataPath;
 		$dir = opendir($path);
 		while (false !== ($filename = readdir($dir))) {
-			if (fnmatch("*.csl", $filename)) {
-				if (!in_array($filename, $keep['independent'])) {
-					Styles::log("Deleting $filename");
-					unlink($path . $filename);
-				}
+			if (strpos($filename, ".") !== false
+					|| $filename == 'dependent'
+					|| $filename == 'cache') {
+				continue;
+			}
+			if (!in_array($filename, $keep['independent'])) {
+				Styles::log("Deleting $filename");
+				unlink($path . $filename);
 			}
 		}
 		closedir($dir);
@@ -155,11 +153,12 @@ class CSL_Index_Generator {
 		$path = self::$dataPath . "dependent/";
 		$dir = opendir($path);
 		while (false !== ($filename = readdir($dir))) {
-			if (fnmatch("*.csl", $filename)) {
-				if (!in_array($filename, $keep['dependent'])) {
-					Styles::log("Deleting dependent/$filename");
-					unlink($path . $filename);
-				}
+			if (strpos($filename, ".") !== false) {
+				continue;
+			}
+			if (!in_array($filename, $keep['dependent'])) {
+				Styles::log("Deleting dependent/$filename");
+				unlink($path . $filename);
 			}
 		}
 		closedir($dir);

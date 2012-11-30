@@ -89,7 +89,7 @@ class Styles_Repo {
 	
 	
 	public static function getCacheValues() {
-		$cacheFile = ROOT_PATH . "tmp/cache";
+		$cacheFile = ROOT_PATH . "styles/data/cache";
 		if (!file_exists($cacheFile)) {
 			return false;
 		}
@@ -98,7 +98,7 @@ class Styles_Repo {
 	
 	
 	public static function setCacheValues($styleList) {
-		$cacheFile = ROOT_PATH . "tmp/cache";
+		$cacheFile = ROOT_PATH . "styles/data/cache";
 		$data = array();
 		$lastModified = '';
 		foreach ($styleList as $style) {
