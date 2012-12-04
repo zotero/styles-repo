@@ -45,8 +45,17 @@ if (isset($PATH_INFO[0])) {
 	$source = !empty($_GET['source']);
 	$csl = Styles_Repo::getCode($name, $dependent);
 	// Dependent flag is optional
-	if (!$csl) {
+	if ($csl) {
+		$lastModified = Styles_Repo::getLastModified($name, false);
+	}
+	else {
 		$csl = Styles_Repo::getCode($name, true);
+		$lastModified = Styles_Repo::getLastModified($name, true);
+	}
+	if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+				&& $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $lastModified)) {
+		header("HTTP/1.1 304 Not Modified");
+		exit;
 	}
 }
 // Style list
@@ -71,6 +80,7 @@ else {
 
 // Single style
 if (!empty($csl)) {
+	header("Last-Modified: " . $lastModified);
 	if (!empty($source)) {
 		header('Content-Type: text/xml');
 	}

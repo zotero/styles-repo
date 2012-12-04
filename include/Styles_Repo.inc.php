@@ -150,12 +150,22 @@ class Styles_Repo {
 	}
 	
 	
-	public static function getTitle($name) {
-		$xml = self::getXML($name);
+	public static function getTitle($name, $dependent=false) {
+		$xml = self::getXML($name, $dependent);
 		if (!$xml) {
 			return "";
 		}
 		return (string) $xml->info->title;
+	}
+	
+	
+	public static function getLastModified($name, $dependent=false) {
+		$xml = self::getXML($name, $dependent);
+		if (!$xml) {
+			return "";
+		}
+		$lastUpdated = (string) $xml->info->updated;
+		return gmdate("D, d M Y H:i:s", strtotime($lastUpdated)) . " GMT";
 	}
 	
 	
