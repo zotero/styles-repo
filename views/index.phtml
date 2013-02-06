@@ -89,7 +89,7 @@
 				$date = date("Y-m-d H:i:s", $time);
 				
 				// Generate href to style
-				$href = $uri . (substr($uri, -1) == '/' ? '' : '/') . $style['name'];
+				$href = $mainURI . (substr($mainURI, -1) == '/' ? '' : '/') . $style['name'];
 				
 				if (!empty($style['disambiguate']) && !empty($style['dependent'])) {
 					$href .= '?dep=1';

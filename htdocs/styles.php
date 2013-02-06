@@ -29,6 +29,8 @@ require('../include/static.inc.php');
 require('../include/Styles_Repo.inc.php');
 
 $uri = $_SERVER['REQUEST_URI'];
+// Strip query string
+$mainURI = preg_replace('/\?.*/', '', $uri);
 
 // Set $PATH_INFO
 if (isset($_SERVER['PATH_INFO'])) {
