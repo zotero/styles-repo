@@ -32,6 +32,12 @@ $uri = $_SERVER['REQUEST_URI'];
 // Strip query string
 $mainURI = preg_replace('/\?.*/', '', $uri);
 
+if (strpos($uri, '/styles/?s=Harvard/') !== false) {
+	header("HTTP/1.1 400 Bad Request");
+	echo "400 Bad Request";
+	exit;
+}
+
 // Set $PATH_INFO
 if (isset($_SERVER['PATH_INFO'])) {
 	$PATH_INFO = explode('/', substr($_SERVER['PATH_INFO'], 1));
