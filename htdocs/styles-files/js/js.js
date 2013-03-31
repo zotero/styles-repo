@@ -217,6 +217,18 @@ ZSR.Search = (function () {
 	
 	return {
 		init: function () {
+			// Bind events to search field
+			var searchField = $("#searchField");
+			searchField.on("keyup", function (event) {
+				ZSR.Search.onSearchKeyUp(event, this);
+			});
+			searchField.on("keypress", function (event) {
+				ZSR.Search.onSearchKeyPress(event)
+			});
+			searchField.on("change", function () {
+				ZSR.Search.onChange(this)
+			});
+			
 			updateSearchResults();
 			
 			$("ul.styleList > li").hover(
