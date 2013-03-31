@@ -117,13 +117,21 @@ class Styles_Repo {
 	}
 	
 	
+	public static function isValidName($name) {
+		if (strpos($name, ".") !== false) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 	public static function getFilePath($name, $dependent=false) {
 		// TEMP
 		if ($name == 'bluebook-19th') {
 			return file_get_contents(ROOT_PATH . 'include/bluebook-19th.csl');
 		}
 		
-		if (strpos($name, ".") !== false) {
+		if (!self::isValidName($name)) {
 			throw new Exception('$name cannot include periods');
 		}
 		

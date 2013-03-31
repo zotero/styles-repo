@@ -45,6 +45,12 @@ if (isset($PATH_INFO[0])) {
 	$name = $PATH_INFO[0];
 	$dependent = !empty($_GET['dep']);
 	$source = !empty($_GET['source']);
+	
+	if (!Styles_Repo::isValidName($name)) {
+		header("HTTP/1.1 404 Not Found");
+		exit;
+	}
+	
 	$csl = Styles_Repo::getCode($name, $dependent);
 	// Dependent flag is optional
 	if ($csl) {
