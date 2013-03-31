@@ -62,7 +62,7 @@ ZSR.Search = (function () {
 			
 			// Hide styles that don't match the search text
 			if (show) {
-				for (var i in searchWords) {
+				for (var i=0; i<searchWords.length; i++) {
 					var word = searchWords[i];
 					// If any search words don't appear in name or title, it's not a match
 					if (name.indexOf(word) == -1 && $(this).text().toLowerCase().indexOf(word) == -1) {
@@ -81,7 +81,7 @@ ZSR.Search = (function () {
 				}
 				
 				if (show) {
-					for (var i in selectedFields) {
+					for (var i=0; i<selectedFields.length; i++) {
 						if (data.fields.indexOf(selectedFields[i]) == -1) {
 							show = false;
 							break;
@@ -106,7 +106,7 @@ ZSR.Search = (function () {
 				
 				// Count fields
 				if (data.fields) {
-					for (var i in data.fields) {
+					for (var i=0; i<data.fields.length; i++) {
 						var field = data.fields[i];
 						if (!fieldCounts[field]) {
 							fieldCounts[field] = 1;
