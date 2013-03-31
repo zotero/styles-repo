@@ -98,13 +98,12 @@
 				
 				$styleName = $style['name'];
 				
-				?><li
-					data-format="<?=$style['categories']['format']?>"
-					data-fields="<?=implode(",",$style['categories']['fields'])?>"
-					<?=$style['dependent'] ? 'data-dependent="1"' : ''?>
-					<?=$style['disambiguate'] ? 'data-disambiguate="1"' : ''?>>
-				<a class="title" href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a>
-				<span class="metadata">(<?=$date?><?php
+				?><li data-format="<?=$style['categories']['format']?>" data-fields="<?=implode(",",$style['categories']['fields'])?>"<?php
+					?><?=$style['dependent'] ? ' data-dependent="1"' : ''?><?php
+					?><?=$style['disambiguate'] ? ' data-disambiguate="1"' : ''?><?php
+					?><?=!empty($style['titleShort']) ? ' data-titleshort="' . htmlspecialchars($style['titleShort']) . '"' : ''?>><?php
+				?><a class="title" href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a><?php
+				?><span class="metadata">(<?=$date?><?php
 					if (!$style['valid']) {
 						?>, <span class="invalid">Invalid</span><?php
 					}

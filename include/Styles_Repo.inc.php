@@ -292,6 +292,7 @@ class Styles_Repo {
 			'dependent' => $dependent,
 			'updated' => (string) $xml->info->updated,
 			'title' => (string) $xml->info->title,
+			'titleShort' => (string) $xml->info->{'title-short'},
 			'valid' => $data->valid,
 			'categories' => $categories,
 			'code' => $code
