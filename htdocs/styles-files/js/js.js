@@ -44,7 +44,7 @@ ZSR.Search = (function () {
 
 		//update URL
 		if(window.history && window.history.replaceState) {
-			window.history.replaceState(null, '', 'styles.php' + (val?'?s=' + encodeURIComponent(val):''));
+			window.history.replaceState(null, '', 'styles' + (val ? '?q=' + encodeURIComponent(val) : ''));
 		}
 		
 		var showDepStyles = !document.getElementById('dependentToggle').checked;

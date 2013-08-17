@@ -43,7 +43,7 @@
 				
 				<div id="searchFields">
 					<p id="searchFieldBox"><input id="searchField" type="search" size="25"
-							placeholder="Title Search" autofocus="autofocus" value="<?=$_GET['s']?>"/></p>
+							placeholder="Title Search" autofocus="autofocus" value="<?=htmlspecialchars($searchString)?>"/></p>
 					<p id="dependentToggleBox"><label title="Check this option to hide dependent styles that differ in name only."><input id="dependentToggle" type="checkbox" onclick="ZSR.Search.startSearch()"/>Show only unique styles</label></p>
 					
 					<div id="formatsBox" class="categoryBox">
