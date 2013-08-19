@@ -86,6 +86,8 @@ else {
 	
 	$styleList = Styles_Repo::getAllStyles();
 	
+	$searchString = isset($_GET['q']) ? $_GET['q'] : '';
+	
 	header("Last-Modified: {$cacheValues['lastModified']}");
 	header('ETag: "' . $cacheValues['etag'] . '"');
 	$numStyles = number_format(sizeOf($styleList));

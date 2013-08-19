@@ -131,13 +131,14 @@ h2 {
  */
 .styleList li {
 	margin-bottom: .6em;
+	line-height: 1.2em;
 }
 
 #view-source {
 	margin: 0 0 0 1.5em;
 	font-size: x-small;
 	vertical-align: middle;
-	line-height: .95em;
+	line-height: .9em;
 }
 
 .styleList .metadata {

@@ -41,6 +41,11 @@ ZSR.Search = (function () {
 		var numDisplayedStyles = 0;
 		var formatCounts = {};
 		var fieldCounts = {};
+
+		//update URL
+		if(window.history && window.history.replaceState) {
+			window.history.replaceState(null, '', 'styles' + (val ? '?q=' + encodeURIComponent(val) : ''));
+		}
 		
 		var showDepStyles = !document.getElementById('dependentToggle').checked;
 		
