@@ -78,7 +78,7 @@ else {
 	
 	if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
 				&& $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $cacheValues['lastModified'])
-			|| (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+			|| (isset($_SERVER['HTTP_IF_NONE_MATCH'])
 				&& trim($_SERVER['HTTP_IF_NONE_MATCH']) == $cacheValues['etag'])) {
 		header("HTTP/1.1 304 Not Modified");
 		exit;
