@@ -99,11 +99,12 @@ if (!empty($csl)) {
 	header("Last-Modified: " . $lastModified);
 	if (!empty($source)) {
 		header('Content-Type: text/xml');
+		header("Content-Disposition: inline; filename=$name.csl");
 	}
 	else {
 		header('Content-Type: application/vnd.citationstyles.style+xml');
+		header("Content-Disposition: attachment; filename=$name.csl");
 	}
-	header("Content-Disposition: attachment; filename=$name.csl");
 	echo $csl;
 }
 
