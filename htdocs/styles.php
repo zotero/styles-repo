@@ -103,7 +103,7 @@ if (!empty($csl)) {
 	else {
 		header('Content-Type: application/vnd.citationstyles.style+xml');
 	}
-	header("Content-Disposition: filename=$name.csl");
+	header("Content-Disposition: attachment; filename=$name.csl");
 	echo $csl;
 }
 
