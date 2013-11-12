@@ -101,7 +101,7 @@ if (!empty($csl)) {
 		header('Content-Type: text/xml');
 	}
 	else {
-		header('Content-Type: text/x-csl; charset=utf-8');
+		header('Content-Type: application/vnd.citationstyles.style+xml');
 	}
 	header("Content-Disposition: filename=$name.csl");
 	echo $csl;
