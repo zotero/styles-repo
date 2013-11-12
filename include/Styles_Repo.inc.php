@@ -144,7 +144,7 @@ class Styles_Repo {
 		if (!$path) {
 			return false;
 		}
-		return file_get_contents($path);
+		return file_exists($path) ? file_get_contents($path) : false;
 	}
 	
 	
