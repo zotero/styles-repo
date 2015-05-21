@@ -83,6 +83,10 @@ foreach ($styles as $style) {
 		}
 	}
 	
+	if ($singleStyle && $name != $singleStyle) {
+		continue;
+	}
+	
 	Styles::log("============================\n");
 	Styles::log("Generating preview for $name\n");
 	
@@ -112,6 +116,11 @@ foreach ($styles as $style) {
 // Update dependents with parent previews
 foreach ($dependents as $dependent) {
 	$name = $dependent['name'];
+	
+	if ($singleStyle && $name != $singleStyle) {
+		continue;
+	}
+	
 	$parentName = $dependent['parentName'];
 	
 	echo "============================\n\n";
