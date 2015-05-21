@@ -117,6 +117,9 @@ foreach ($dependents as $dependent) {
 	echo "============================\n\n";
 	echo "Generating preview for $name (dep)\n\n";
 	
+	$previewCitations = null;
+	$previewBib = null;
+	
 	if (isset($previews[$parentName])) {
 		$previewCitations = $previews[$parentName]['citation'];
 		$previewBib = $previews[$parentName]['bib'];
