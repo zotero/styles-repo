@@ -223,7 +223,10 @@ class CSLPreview {
 		$time = microtime(true) - $start;
 		
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		if ($code == 404) {
+		if ($code == 0) {
+			throw new Exception("Request timed out");
+		}
+		else if ($code == 404) {
 			throw new Exception("Invalid style", Z_ERROR_CITESERVER_INVALID_STYLE);
 		}
 		
