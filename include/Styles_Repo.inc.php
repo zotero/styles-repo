@@ -209,7 +209,11 @@ class Styles_Repo {
 			throw new Exception("Invalid name '" . $name . "'");
 		}
 		
-		$path = ROOT_PATH . 'htdocs/styles-files/previews/citation/' . $name . '.json';
+		$path = ROOT_PATH . 'htdocs/styles-files/previews/citation/';
+		if ($dependent) {
+			$path .= 'dependent/';
+		}
+		$path .= $name . '.json';
 		$preview = file_put_contents($path, json_encode($preview));
 	}
 	
