@@ -27,8 +27,6 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<title>Zotero Style Repository</title>
-		
-		<link rel="stylesheet" type="text/css" href="<?=staticFile('/styles-files/css/jquery.qtip.css')?>"/>
 		<link rel="stylesheet" type="text/css" href="<?=staticFile('/styles-files/css/style.css')?>"/>
 	</head>
 	
@@ -38,23 +36,33 @@
 			
 			<p>Here you can find <a href="http://citationstyles.org/">Citation Style Language</a> 1.0.1 citation styles for use with <a href="http://www.zotero.org/">Zotero</a> and other CSL 1.0.1–compatible software. For more information on using CSL styles with Zotero, see the <a href="http://www.zotero.org/support/styles">Zotero wiki</a>.</p>
 			
-			<div id="searchPane" style="display: none">
+			<div id="searchPane">
 				<h2>Style Search</h2>
 				
 				<div id="searchFields">
-					<p id="searchFieldBox"><input id="searchField" type="search" size="25"
-							placeholder="Title Search" autofocus="autofocus" value="<?=htmlspecialchars($searchString)?>"/></p>
-					<p id="dependentToggleBox"><label title="Check this option to hide dependent styles that differ in name only."><input id="dependentToggle" type="checkbox" onclick="ZSR.Search.startSearch()"/>Show only unique styles</label></p>
+					<p id="searchFieldBox">
+						<input id="searchField" type="search" size="25" placeholder="Title Search" autofocus="autofocus"/>
+					</p>
+					<p id="dependentToggleBox">
+						<label title="Check this option to hide dependent styles that differ in name only.">
+							<input id="dependentToggle" type="checkbox" />
+							Show only unique styles
+						</label>
+					</p>
 					
 					<div id="formatsBox" class="categoryBox">
 						<p>Format:</p>
-						<ul id="formats"><li class="loading">Loading…</li></ul>
+						<ul id="formats">
+							<li class="loading">Loading…</li>
+						</ul>
 						<div style="clear:left"></div>
 					</div>
 					
 					<div id="fieldsBox" class="categoryBox">
 						<p>Fields:</p>
-						<ul id="fields"><li class="loading">Loading…</li></ul>
+						<ul id="fields">
+							<li class="loading">Loading…</li>
+						</ul>
 						<div style="clear:left"></div>
 					</div>
 				</div>
@@ -62,67 +70,15 @@
 				<div id="loading" style="visibility: hidden">Loading…</div>
 				<div style="clear:left"></div>
 			</div>
-			
-			<!-- If JavaScript is available, show the search pane -->
-			<script>
-				document.getElementById('searchPane').style.display = 'block';
-			</script>
-			
-			<p id="styleCount"><?php
-				switch ($numStyles) {
-					case "0":
-						echo "No styles found";
-						break;
-					
-					case "1":
-						echo "1 style found:";
-						break;
-					
-					default:
-						echo $numStyles . " styles found:";
-				}
-			?></p>
-			
-			<ul class="styleList">
-			<?php foreach ($styleList as $style) {
-				date_default_timezone_set('UTC');
-				$time = strtotime($style['updated']);
-				$date = date("Y-m-d H:i:s", $time);
-				
-				// Generate href to style
-				$href = $mainURI . (substr($mainURI, -1) == '/' ? '' : '/') . $style['name'];
-				
-				if (!empty($style['disambiguate']) && !empty($style['dependent'])) {
-					$href .= '?dep=1';
-				}
-				
-				$styleName = $style['name'];
-				
-				?><li data-format="<?=$style['categories']['format']?>" data-fields="<?=implode(",",$style['categories']['fields'])?>"<?php
-					?><?=$style['dependent'] ? ' data-dependent="1"' : ''?><?php
-					?><?=$style['disambiguate'] ? ' data-disambiguate="1"' : ''?><?php
-					?><?=!empty($style['titleShort']) ? ' data-titleshort="' . htmlspecialchars($style['titleShort']) . '"' : ''?>><?php
-				?><a class="title" href="<?=htmlentities($href)?>"><?=htmlspecialchars($style['title'])?></a><?php
-				?><span class="metadata">(<?=$date?><?php
-					if (!$style['valid']) {
-						?>, <span class="invalid">Invalid</span><?php
-					}
-				?>)</span>
-				</li><?php
-			} ?></ul>
+
+			<div id="container"></div>
 		</div>
-		
+
 		<button id="view-source" style="display: none">View Source</button>
-		
-		<script src="/styles-files/js/jquery-1.7.1.min.js"></script>
-		<script src="<?=staticFile('/styles-files/js/jquery.qtip.min.js')?>"></script>
-		<!--<script src="<?=staticFile('/styles-files/js/quickpager.jquery.js')?>"></script>-->
-		
-		<script src="<?=staticFile('/styles-files/js/js.js')?>"></script>
+		<script src="<?=staticFile('/styles-files/js/zsr.js')?>"></script>
+
 		<script>
-			$().ready(function() {
-				ZSR.Search.init();
-			});
+			var zsr = new ZSR(document.getElementById('container'));
 		</script>
 	</body>
 </html>

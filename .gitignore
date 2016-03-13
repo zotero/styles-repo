@@ -3,3 +3,5 @@ scripts/schema/*
 scripts/trang.jar
 htdocs/styles-files/previews/*.html
 !htdocs/styles-files/previews/index.html
+frontend/node_modules
+.DS_Store
