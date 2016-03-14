@@ -3,6 +3,7 @@ require('core-js/es6/promise');
 require('whatwg-fetch');
 import debounce from 'lodash/debounce';
 import extend from 'lodash/extend';
+import intersection from 'lodash/intersection';
 import { node, mountToDom, Component } from 'vidom';
 
 var itemTpl = function(title, href, updated) {
@@ -24,14 +25,6 @@ var itemTpl = function(title, href, updated) {
 		]);
 }
 
-// var fieldTpl = function(field) {
-// 	return node('li').children(field);
-// }
-
-// var formatTpl = function(format) {
-// 	return node('li').children(format);
-// }
-
 class AppComponent extends Component {
 	onRender() {
 		return node('div')
@@ -45,15 +38,16 @@ class AppComponent extends Component {
 								.attrs({
 									type: 'search',
 									placeholder: 'Title Search',
-									value: this.state && this.state.query.search || '',
-									onKeyUp: e => this.onKeyUp(e)
+									value: this.state && this.state.query.initialSearch || '',
+									onKeyUp: e => this.onKeyUp(e),
+									onChange: e => this.onKeyUp(e)
 								})
 						]),
 						node('p').children(node('ul')
 							.children(this.state && this.state.formats.map(field => {
 								return node('li')
 									.attrs({
-										onClick: e => this.onClick('field', e)
+										onClick: e => this.onClick('format', e)
 									})
 									.children(field);
 							}))),
@@ -61,7 +55,7 @@ class AppComponent extends Component {
 							.children(this.state && this.state.fields.map(format => {
 								return node('li')
 									.attrs({
-										onClick: e => this.onClick('format', e)
+										onClick: e => this.onClick('fields', e)
 									})
 									.children(format);
 							}))),
@@ -86,7 +80,29 @@ class AppComponent extends Component {
 	}
 
 	onClick(type, e) {
-		console.log(e);
+		let query = {};
+		let value = e.target.innerText;
+		
+		if(type === 'fields') {
+			query['fields'] = this.state.query.fields || [];
+			if(this.state.query.fields) {
+				let pos = this.state.query.fields.indexOf(value);
+				if(pos > -1) {
+					query['fields'].splice(pos, 1);
+				} else {
+					query['fields'].push(value);
+				}
+			} else {
+				query['fields'].push(value);
+			}
+		} else if(type === 'format') {
+			if(this.state.query.format === value) {
+				query['format'] = null;
+			} else {
+				query['format'] = value;
+			}
+		}
+		this.onQuery(query);
 	}
 
 	onMount() {
@@ -99,13 +115,6 @@ class AppComponent extends Component {
 			this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updatedFormatted));
 		}
 
-		// if(diff.indexOf('fields') > -1) {
-		// 	this.fields = this.state.fields.map(field => fieldTpl(field));
-		// }
-
-		// if(diff.indexOf('formats') > -1) {
-		// 	this.formats = this.state.formats.map(format => formatTpl(format));
-		// }
 		this._update();
 	}
 
@@ -121,7 +130,6 @@ class AppComponent extends Component {
 	 constructor(zsr) {
 		super();
 		this.onQuery = debounce((query) => {
-			console.log('bounced!');
 			let qqq = extend({}, this.state.query, query);
 			this.zsr.search(qqq);
 		}, 150);
@@ -129,15 +137,12 @@ class AppComponent extends Component {
 	 	this.state = this.zsr.state
 	 	this.state.onChange(this.onStateChange.bind(this));
 	 	this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updatedFormatted));
-	 	// this.fields = this.state.fields.map(field => fieldTpl(field));
-	 	// this.formats = this.state.formats.map(format => formatTpl(format));
 	 }
 }
 
 class AppState {
 	constructor(properties) {
 		this._changeHandlers = [];
-		// _.extend(this, properties);
 		this.setState(properties);
 	}
 
@@ -153,12 +158,11 @@ class AppState {
 				this[keys[i]] = properties[keys[i]];
 			}
 		}
-		// _.extend(this, properties);
 		this._changeHandlers.forEach(handler => handler(diff, this));
 	}
 }
 
-function fieldsAndFormats(styles) {
+function fieldsAndFormats(styles, initial) {
 	var formatGroups = {};
 	var fieldGroups = {};
 
@@ -176,6 +180,10 @@ function fieldsAndFormats(styles) {
 		});
 	});
 
+	if(initial) {
+		return [fieldGroups, formatGroups, Object.keys(fieldGroups), Object.keys(formatGroups)];		
+	}
+
 	return [Object.keys(fieldGroups), Object.keys(formatGroups)];
 }
 
@@ -187,10 +195,8 @@ module.exports = function ZSR(container) {
 				let t0 = performance.now();
 				this.container = container;
 				this.styles = styles;
-				this.formatGroups = {};// _.groupBy(this.styles, style => style.categories.format);
-				this.fieldGroups = {};
 
-				[this.fields, this.formats] = fieldsAndFormats(styles);
+				[this.fieldGroups, this.formatGroups, this.fields, this.formats] = fieldsAndFormats(styles, true);
 
 				this.state = new AppState({
 					styles: this.styles,
@@ -225,7 +231,7 @@ module.exports.prototype.search = function(query) {
 	if(query) {
 		let queryKeys = Object.keys(query);
 		if(queryKeys.indexOf('format') > -1) {
-			filtered = this.formats[query.format] || filtered;
+			filtered = this.formatGroups[query.format] || filtered;
 		}
 
 		if(queryKeys.indexOf('dependent') > -1) {
@@ -234,18 +240,12 @@ module.exports.prototype.search = function(query) {
 
 		if(queryKeys.indexOf('fields') > -1) {
 			filtered = filtered.filter(item => {
-				let result = false;
-				item.categories.fields.forEach(field => {
-					if(query.fields.indexOf(field) > -1) {
-						result = true;
-					}
-				});
-				return result;
+				return intersection(query.fields, item.categories.fields).length === query.fields.length;
 			});
 		}
 
-		if(queryKeys.indexOf('search') > -1) {
-			filtered = this.styles.filter(item => {
+		if(queryKeys.indexOf('search') > -1 && queryKeys[queryKeys.indexOf('search')].length) {
+			filtered = filtered.filter(item => {
 				let queryLow = query.search.toLowerCase();
 				return item.name.toLowerCase().indexOf(queryLow) > -1
 				|| item.title.toLowerCase().indexOf(queryLow) > -1
@@ -259,9 +259,10 @@ module.exports.prototype.search = function(query) {
 	let t1 = performance.now();
 	console.log('Filtering took ' + (t1 - t0) + ' ms.');
 	this.state.setState({
-		'styles': filtered,
-		'fields': fields,
-		'formats': formats
+		styles: filtered,
+		fields: fields,
+		formats: formats,
+		query: query
 	});
 }
 
