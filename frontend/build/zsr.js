@@ -6596,19 +6596,32 @@ var AppComponent = function (_Component) {
 				onChange: function onChange(e) {
 					return _this2.onKeyUp(e);
 				}
-			})]), (0, _vidom.node)('p').children((0, _vidom.node)('ul').children(this.state && this.state.formats.map(function (field) {
+			})]), (0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Format:'), (0, _vidom.node)('ul').attrs({
+				className: 'formats-list'
+			}).children(this.state && this.state.formats.sort().map(function (format) {
 				return (0, _vidom.node)('li').attrs({
+					className: _this2.state && _this2.state.query.format == format ? 'format-active' : 'a',
 					onClick: function onClick(e) {
 						return _this2.onClick('format', e);
 					}
-				}).children(field);
-			}))), (0, _vidom.node)('p').children((0, _vidom.node)('ul').children(this.state && this.state.fields.map(function (format) {
+				}).children(format);
+			}))]), (0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Fields:'), (0, _vidom.node)('ul').attrs({
+				className: 'fields-list'
+			}).children(this.state && this.state.fields.sort().map(function (field) {
 				return (0, _vidom.node)('li').attrs({
+					className: _this2.state && _this2.state.query.fields && _this2.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a',
 					onClick: function onClick(e) {
 						return _this2.onClick('fields', e);
 					}
-				}).children(format);
-			}))), (0, _vidom.node)('p').children((0, _vidom.node)('label').children((0, _vidom.node)('input')))]), (0, _vidom.node)('ul').children(this.items ? this.items : [])]);
+				}).children(field);
+			}))]), (0, _vidom.node)('p').children((0, _vidom.node)('label').children([(0, _vidom.node)('input').attrs({
+				type: 'checkbox',
+				onChange: function onChange(e) {
+					return _this2.onClick('unique', e);
+				}
+			}), (0, _vidom.node)('p').children('Show only unique styles')]))]), (0, _vidom.node)('p').attrs({
+				className: 'style-count'
+			}).children(this.items ? this.items.length + ' styles found:' : null), (0, _vidom.node)('ul').children(this.items ? this.items : [])]);
 		}
 	}, {
 		key: 'onKeyUp',
@@ -6643,6 +6656,8 @@ var AppComponent = function (_Component) {
 				} else {
 					query['format'] = value;
 				}
+			} else if (type === 'unique') {
+				query['dependent'] = e.target.checked ? 0 : null;
 			}
 			this.onQuery(query);
 		}
@@ -6810,8 +6825,8 @@ module.exports.prototype.search = function (query) {
 			filtered = this.formatGroups[query.format] || filtered;
 		}
 
-		if (queryKeys.indexOf('dependent') > -1) {
-			filtered = this.styles.filter(function (item) {
+		if (queryKeys.indexOf('dependent') > -1 && query.dependent !== null) {
+			filtered = filtered.filter(function (item) {
 				return !!query.dependent === !!item.dependent;
 			});
 		}

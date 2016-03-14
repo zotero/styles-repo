@@ -12,6 +12,7 @@ const gulpif = require('gulp-if');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
+const sass = require('gulp-sass');
 
 function onError(err) {
 	console.warn(err);
@@ -50,8 +51,19 @@ gulp.task('jsDev', function() {
 	return getBuild(true);
 });
 
+gulp.task('sass', function () {
+  return gulp.src('./scss/*.scss')
+    .pipe(plumber({errorHandler: onError}))
+    .pipe(sass())
+    .pipe(gulp.dest('./build'));
+});
+ 
+gulp.task('sass:watch', function () {
+  gulp.watch('./scss/*.scss', ['sass']);
+});
 
-gulp.task('dev', function() {
+
+gulp.task('dev', ['sass', 'sass:watch'], function() {
 	gulp.watch('./zsr.js', ['jsDev']);
 	return getBuild(true);
 });

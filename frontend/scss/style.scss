@@ -1,0 +1,61 @@
+$accent-color: #999;
+$accent-background-color: #f0f0f0;
+
+$highlight-color: #6d95e0;
+$highlight-background-color: #bbcef1;
+
+body {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	font-size: 1.7em;
+}
+
+
+h2 {
+	font-size: 1.3em;
+	margin: 0;
+	top: 18px;
+}
+
+.page-wrapper {
+	padding: 0 1em;
+}
+
+
+.search-pane {
+	background: $accent-background-color;
+	border: 1px $accent-color solid;
+	margin: 1em 0;
+	max-width: 1010px;
+	min-height: 140px;
+	min-width: 720px;
+	padding: 0 1em 1em;
+	position: relative;
+
+	.fields-list,
+	.formats-list {
+
+		list-style: none;
+
+		li {
+			border: 1px $accent-color solid;
+			border-radius: 8px;
+			cursor: default;
+			display: inline-block;
+			margin: 4px 7px 4px 0;
+			padding: 3px 6px;
+
+
+			&:hover,
+			&.field-active,
+			&.format-active {
+				background: $highlight-background-color;
+				border: 1px solid $highlight-color;
+			}
+		}
+	}
+}

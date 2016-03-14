@@ -1,0 +1,42 @@
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  margin: 0;
+  padding: 0; }
+
+h1 {
+  font-size: 1.7em; }
+
+h2 {
+  font-size: 1.3em;
+  margin: 0;
+  top: 18px; }
+
+.page-wrapper {
+  padding: 0 1em; }
+
+.search-pane {
+  background: #f0f0f0;
+  border: 1px #999 solid;
+  margin: 1em 0;
+  max-width: 1010px;
+  min-height: 140px;
+  min-width: 720px;
+  padding: 0 1em 1em;
+  position: relative; }
+  .search-pane .fields-list,
+  .search-pane .formats-list {
+    list-style: none; }
+    .search-pane .fields-list li,
+    .search-pane .formats-list li {
+      border: 1px #999 solid;
+      border-radius: 8px;
+      cursor: default;
+      display: inline-block;
+      margin: 4px 7px 4px 0;
+      padding: 3px 6px; }
+      .search-pane .fields-list li:hover, .search-pane .fields-list li.field-active, .search-pane .fields-list li.format-active,
+      .search-pane .formats-list li:hover,
+      .search-pane .formats-list li.field-active,
+      .search-pane .formats-list li.format-active {
+        background: #bbcef1;
+        border: 1px solid #6d95e0; }

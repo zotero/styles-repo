@@ -43,29 +43,57 @@ class AppComponent extends Component {
 									onChange: e => this.onKeyUp(e)
 								})
 						]),
-						node('p').children(node('ul')
-							.children(this.state && this.state.formats.map(field => {
-								return node('li')
+						node('p')
+							.children([
+								node('strong')
+									.children('Format:'),
+								node('ul')
 									.attrs({
-										onClick: e => this.onClick('format', e)
+										className: 'formats-list'
 									})
-									.children(field);
-							}))),
-						node('p').children(node('ul')
-							.children(this.state && this.state.fields.map(format => {
-								return node('li')
+									.children(this.state && this.state.formats.sort().map(format => {
+										return node('li')
+											.attrs({
+												className: this.state && this.state.query.format == format ? 'format-active' : 'a' ,
+												onClick: e => this.onClick('format', e)
+											})
+											.children(format);
+									}))
+							]),
+						node('p')
+							.children([
+								node('strong')
+									.children('Fields:'),
+								node('ul')
 									.attrs({
-										onClick: e => this.onClick('fields', e)
+										className: 'fields-list'
 									})
-									.children(format);
-							}))),
+									.children(this.state && this.state.fields.sort().map(field => {
+										return node('li')
+											.attrs({
+												className: this.state && this.state.query.fields && this.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a' ,
+												onClick: e => this.onClick('fields', e)
+											})
+											.children(field);
+									}))
+							]),
 						node('p').children(
 							node('label')
-								.children(
+								.children([
 									node('input')
-								)	
+										.attrs({
+											type: 'checkbox',
+											onChange: e => this.onClick('unique', e)
+										}),
+									node('p')
+										.children('Show only unique styles')
+								])
 						)
 					]),
+				node('p')
+					.attrs({
+						className: 'style-count'
+					}).children(this.items ? `${this.items.length} styles found:` : null),
 				node('ul')
 					.children(this.items ? this.items : [])
 			]);
@@ -101,6 +129,8 @@ class AppComponent extends Component {
 			} else {
 				query['format'] = value;
 			}
+		} else if(type === 'unique') {
+			query['dependent'] = e.target.checked ? 0 : null;
 		}
 		this.onQuery(query);
 	}
@@ -234,8 +264,8 @@ module.exports.prototype.search = function(query) {
 			filtered = this.formatGroups[query.format] || filtered;
 		}
 
-		if(queryKeys.indexOf('dependent') > -1) {
-			filtered = this.styles.filter(item => !!query.dependent === !!item.dependent);
+		if(queryKeys.indexOf('dependent') > -1 && query.dependent !== null) {
+			filtered = filtered.filter(item => !!query.dependent === !!item.dependent);
 		}
 
 		if(queryKeys.indexOf('fields') > -1) {
