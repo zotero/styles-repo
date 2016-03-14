@@ -6573,7 +6573,7 @@ var itemTpl = function itemTpl(title, href, updated) {
 		href: href
 	}).children(title), (0, _vidom.node)('span').key('metadata').attrs({
 		className: 'metadata'
-	}).children(updated)]);
+	}).children('(' + updated + ')')]);
 };
 
 var AppComponent = function (_Component) {
@@ -6586,8 +6586,11 @@ var AppComponent = function (_Component) {
 
 			return (0, _vidom.node)('div').children([(0, _vidom.node)('div').attrs({
 				className: 'search-pane'
-			}).children([(0, _vidom.node)('p').children([(0, _vidom.node)('input').attrs({
+			}).children([(0, _vidom.node)('div').attrs({
+				className: 'search-pane-col-1'
+			}).children([(0, _vidom.node)('h2').children('Style Search'), (0, _vidom.node)('p').children([(0, _vidom.node)('input').attrs({
 				type: 'search',
+				className: 'search-field',
 				placeholder: 'Title Search',
 				value: this.state && this.state.query.initialSearch || '',
 				onKeyUp: function onKeyUp(e) {
@@ -6596,7 +6599,16 @@ var AppComponent = function (_Component) {
 				onChange: function onChange(e) {
 					return _this2.onKeyUp(e);
 				}
-			})]), (0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Format:'), (0, _vidom.node)('ul').attrs({
+			})]), (0, _vidom.node)('p').children((0, _vidom.node)('label').attrs({
+				className: 'search-unique'
+			}).children([(0, _vidom.node)('input').attrs({
+				type: 'checkbox',
+				onChange: function onChange(e) {
+					return _this2.onClick('unique', e);
+				}
+			}), (0, _vidom.node)('span').children('Show only unique styles')]))]), (0, _vidom.node)('div').attrs({
+				className: 'search-pane-col-2'
+			}).children([(0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Format:'), (0, _vidom.node)('ul').attrs({
 				className: 'formats-list'
 			}).children(this.state && this.state.formats.sort().map(function (format) {
 				return (0, _vidom.node)('li').attrs({
@@ -6614,14 +6626,11 @@ var AppComponent = function (_Component) {
 						return _this2.onClick('fields', e);
 					}
 				}).children(field);
-			}))]), (0, _vidom.node)('p').children((0, _vidom.node)('label').children([(0, _vidom.node)('input').attrs({
-				type: 'checkbox',
-				onChange: function onChange(e) {
-					return _this2.onClick('unique', e);
-				}
-			}), (0, _vidom.node)('p').children('Show only unique styles')]))]), (0, _vidom.node)('p').attrs({
+			}))])])]), (0, _vidom.node)('p').attrs({
 				className: 'style-count'
-			}).children(this.items ? this.items.length + ' styles found:' : null), (0, _vidom.node)('ul').children(this.items ? this.items : [])]);
+			}).children(this.items ? this.items.length + ' styles found:' : null), (0, _vidom.node)('ul').attrs({
+				className: 'style-list'
+			}).children(this.items ? this.items : [])]);
 		}
 	}, {
 		key: 'onKeyUp',

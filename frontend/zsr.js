@@ -21,7 +21,7 @@ var itemTpl = function(title, href, updated) {
 				.attrs({
 					className: 'metadata',
 				})
-				.children(updated)
+				.children(`(${updated})`)
 		]);
 }
 
@@ -33,68 +33,89 @@ class AppComponent extends Component {
 					.attrs({
 						className: 'search-pane'
 					}).children([
-						node('p').children([
-							node('input')
-								.attrs({
-									type: 'search',
-									placeholder: 'Title Search',
-									value: this.state && this.state.query.initialSearch || '',
-									onKeyUp: e => this.onKeyUp(e),
-									onChange: e => this.onKeyUp(e)
-								})
-						]),
-						node('p')
+						node('div')
+							.attrs({
+								className: 'search-pane-col-1'
+							})
 							.children([
-								node('strong')
-									.children('Format:'),
-								node('ul')
-									.attrs({
-										className: 'formats-list'
-									})
-									.children(this.state && this.state.formats.sort().map(format => {
-										return node('li')
-											.attrs({
-												className: this.state && this.state.query.format == format ? 'format-active' : 'a' ,
-												onClick: e => this.onClick('format', e)
-											})
-											.children(format);
-									}))
-							]),
-						node('p')
-							.children([
-								node('strong')
-									.children('Fields:'),
-								node('ul')
-									.attrs({
-										className: 'fields-list'
-									})
-									.children(this.state && this.state.fields.sort().map(field => {
-										return node('li')
-											.attrs({
-												className: this.state && this.state.query.fields && this.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a' ,
-												onClick: e => this.onClick('fields', e)
-											})
-											.children(field);
-									}))
-							]),
-						node('p').children(
-							node('label')
-								.children([
+								node('h2')
+								.children('Style Search'),
+								node('p').children([
 									node('input')
 										.attrs({
-											type: 'checkbox',
-											onChange: e => this.onClick('unique', e)
-										}),
-									node('p')
-										.children('Show only unique styles')
-								])
-						)
+											type: 'search',
+											className: 'search-field',
+											placeholder: 'Title Search',
+											value: this.state && this.state.query.initialSearch || '',
+											onKeyUp: e => this.onKeyUp(e),
+											onChange: e => this.onKeyUp(e)
+										})
+								]),
+								node('p').children(
+								node('label')
+									.attrs({
+										className: 'search-unique'
+									})
+									.children([
+										node('input')
+											.attrs({
+												type: 'checkbox',
+												onChange: e => this.onClick('unique', e)
+											}),
+										node('span')
+											.children('Show only unique styles')
+									])
+								)
+							]),
+						node('div')
+							.attrs({
+								className: 'search-pane-col-2'
+							})
+							.children([
+								node('p')
+									.children([
+										node('strong')
+											.children('Format:'),
+										node('ul')
+											.attrs({
+												className: 'formats-list'
+											})
+											.children(this.state && this.state.formats.sort().map(format => {
+												return node('li')
+													.attrs({
+														className: this.state && this.state.query.format == format ? 'format-active' : 'a' ,
+														onClick: e => this.onClick('format', e)
+													})
+													.children(format);
+											}))
+									]),
+								node('p')
+									.children([
+										node('strong')
+											.children('Fields:'),
+										node('ul')
+											.attrs({
+												className: 'fields-list'
+											})
+											.children(this.state && this.state.fields.sort().map(field => {
+												return node('li')
+													.attrs({
+														className: this.state && this.state.query.fields && this.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a' ,
+														onClick: e => this.onClick('fields', e)
+													})
+													.children(field);
+											}))
+									])
+							])
 					]),
 				node('p')
 					.attrs({
 						className: 'style-count'
 					}).children(this.items ? `${this.items.length} styles found:` : null),
 				node('ul')
+					.attrs({
+						className: 'style-list'
+					})
 					.children(this.items ? this.items : [])
 			]);
 	}

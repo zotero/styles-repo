@@ -21,8 +21,9 @@ h2 {
   max-width: 1010px;
   min-height: 140px;
   min-width: 720px;
-  padding: 0 1em 1em;
-  position: relative; }
+  padding: 0 1em;
+  display: flex;
+  flex-direction: row; }
   .search-pane .fields-list,
   .search-pane .formats-list {
     list-style: none; }
@@ -40,3 +41,32 @@ h2 {
       .search-pane .formats-list li.format-active {
         background: #bbcef1;
         border: 1px solid #6d95e0; }
+
+.search-field {
+  font-size: 16px;
+  width: 255px;
+  max-width: 255px;
+  margin-top: 1em; }
+
+.style-list li {
+  margin-bottom: .6em;
+  line-height: 1.2em; }
+
+.style-list .metadata {
+  font-size: .85em;
+  margin-left: 1.5em; }
+
+.search-pane-col-1 {
+  flex: 0 0 260px;
+  padding-top: 1.5em; }
+
+.search-pane-col-2 p {
+  display: flex;
+  flex-direction: row; }
+  .search-pane-col-2 p strong {
+    padding-top: 0.5em;
+    min-width: 100px;
+    text-align: right; }
+  .search-pane-col-2 p ul {
+    padding: 0 0 0 0.5em;
+    margin: 0; }
