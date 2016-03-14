@@ -6584,6 +6584,38 @@ var AppComponent = function (_Component) {
 		value: function onRender() {
 			var _this2 = this;
 
+			var formatsList, fieldsList;
+
+			if (!this.state || this.state.fetching) {
+				formatsList = (0, _vidom.node)('span').children('Loading...');
+			} else {
+				formatsList = (0, _vidom.node)('ul').attrs({
+					className: 'formats-list'
+				}).children(this.state && this.state.formats.sort().map(function (format) {
+					return (0, _vidom.node)('li').attrs({
+						className: _this2.state && _this2.state.query.format == format ? 'format-active' : 'a',
+						onClick: function onClick(e) {
+							return _this2.onClick('format', e);
+						}
+					}).children(format);
+				}));
+			}
+
+			if (!this.state || this.state.fetching) {
+				fieldsList = (0, _vidom.node)('span').children('Loading...');
+			} else {
+				fieldsList = (0, _vidom.node)('ul').attrs({
+					className: 'fields-list'
+				}).children(this.state && this.state.fields.sort().map(function (field) {
+					return (0, _vidom.node)('li').attrs({
+						className: _this2.state && _this2.state.query.fields && _this2.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a',
+						onClick: function onClick(e) {
+							return _this2.onClick('fields', e);
+						}
+					}).children(field);
+				}));
+			}
+
 			return (0, _vidom.node)('div').children([(0, _vidom.node)('div').attrs({
 				className: 'search-pane'
 			}).children([(0, _vidom.node)('div').attrs({
@@ -6591,6 +6623,7 @@ var AppComponent = function (_Component) {
 			}).children([(0, _vidom.node)('h2').children('Style Search'), (0, _vidom.node)('p').children([(0, _vidom.node)('input').attrs({
 				type: 'search',
 				className: 'search-field',
+				id: 'search-field',
 				placeholder: 'Title Search',
 				value: this.state && this.state.query.initialSearch || '',
 				onKeyUp: function onKeyUp(e) {
@@ -6608,27 +6641,9 @@ var AppComponent = function (_Component) {
 				}
 			}), (0, _vidom.node)('span').children('Show only unique styles')]))]), (0, _vidom.node)('div').attrs({
 				className: 'search-pane-col-2'
-			}).children([(0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Format:'), (0, _vidom.node)('ul').attrs({
-				className: 'formats-list'
-			}).children(this.state && this.state.formats.sort().map(function (format) {
-				return (0, _vidom.node)('li').attrs({
-					className: _this2.state && _this2.state.query.format == format ? 'format-active' : 'a',
-					onClick: function onClick(e) {
-						return _this2.onClick('format', e);
-					}
-				}).children(format);
-			}))]), (0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Fields:'), (0, _vidom.node)('ul').attrs({
-				className: 'fields-list'
-			}).children(this.state && this.state.fields.sort().map(function (field) {
-				return (0, _vidom.node)('li').attrs({
-					className: _this2.state && _this2.state.query.fields && _this2.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a',
-					onClick: function onClick(e) {
-						return _this2.onClick('fields', e);
-					}
-				}).children(field);
-			}))])])]), (0, _vidom.node)('p').attrs({
-				className: 'style-count'
-			}).children(this.items ? this.items.length + ' styles found:' : null), (0, _vidom.node)('ul').attrs({
+			}).children([(0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Format:'), formatsList]), (0, _vidom.node)('p').children([(0, _vidom.node)('strong').children('Fields:'), fieldsList])])]), (0, _vidom.node)('div').attrs({
+				className: !this.state || this.state.fetching ? 'styles-loading' : 'style-count'
+			}).children(this.state && !this.state.fetching && this.items ? this.items.length + ' styles found:' : null), (0, _vidom.node)('ul').attrs({
 				className: 'style-list'
 			}).children(this.items ? this.items : [])]);
 		}
@@ -6673,7 +6688,12 @@ var AppComponent = function (_Component) {
 	}, {
 		key: 'onMount',
 		value: function onMount() {
-			this._update();
+			var _this3 = this;
+
+			this._update(function () {
+				console.info(_this3.getDomNode().querySelector('#search-field'));
+				_this3.getDomNode().querySelector('#search-field').focus();
+			});
 		}
 	}, {
 		key: 'onStateChange',
@@ -6689,11 +6709,17 @@ var AppComponent = function (_Component) {
 		}
 	}, {
 		key: '_update',
-		value: function _update() {
+		value: function _update(cb) {
+			var _this4 = this,
+			    _arguments = arguments;
+
 			var t0 = performance.now();
 			this.update(function () {
 				var t1 = performance.now();
 				console.log('Rendering took ' + (t1 - t0) + ' ms.');
+				if (cb) {
+					cb.apply(_this4, _arguments);
+				}
 			});
 		}
 	}]);
@@ -6735,7 +6761,7 @@ var AppState = function () {
 	}, {
 		key: 'setState',
 		value: function setState(properties) {
-			var _this3 = this;
+			var _this5 = this;
 
 			var diff = [];
 			for (var i = 0, keys = Object.keys(properties); i < keys.length; i++) {
@@ -6745,7 +6771,7 @@ var AppState = function () {
 				}
 			}
 			this._changeHandlers.forEach(function (handler) {
-				return handler(diff, _this3);
+				return handler(diff, _this5);
 			});
 		}
 	}]);
@@ -6779,36 +6805,42 @@ function fieldsAndFormats(styles, initial) {
 }
 
 module.exports = function ZSR(container) {
-	var _this4 = this;
+	var _this6 = this;
 
+	this.container = container;
+
+	this.state = new AppState({
+		styles: [],
+		formats: [],
+		fields: [],
+		query: {},
+		fetching: true
+	});
+
+	this.mount();
+
+	var t0 = performance.now();
 	fetch('/json.php').then(function (response) {
 		if (response.status >= 200 && response.status < 300) {
 			response.json().then(function (styles) {
-				console.log(styles);
-				var t0 = performance.now();
-				_this4.container = container;
-				_this4.styles = styles;
+				var t1 = performance.now();
+				console.log('Fetching json took ' + (t1 - t0) + ' ms.');
+				_this6.state.setState({
+					fetching: false
+				});
+
+				_this6.styles = styles;
 
 				var _fieldsAndFormats = fieldsAndFormats(styles, true);
 
 				var _fieldsAndFormats2 = _slicedToArray(_fieldsAndFormats, 4);
 
-				_this4.fieldGroups = _fieldsAndFormats2[0];
-				_this4.formatGroups = _fieldsAndFormats2[1];
-				_this4.fields = _fieldsAndFormats2[2];
-				_this4.formats = _fieldsAndFormats2[3];
+				_this6.fieldGroups = _fieldsAndFormats2[0];
+				_this6.formatGroups = _fieldsAndFormats2[1];
+				_this6.fields = _fieldsAndFormats2[2];
+				_this6.formats = _fieldsAndFormats2[3];
 
-
-				_this4.state = new AppState({
-					styles: _this4.styles,
-					formats: _this4.formats,
-					fields: _this4.fields,
-					query: {}
-				});
-
-				var t1 = performance.now();
-				console.log('Initial setup took ' + (t1 - t0) + ' ms.');
-				_this4.mount();
+				_this6.search(_this6.state.query);
 			});
 		}
 	});
@@ -6827,6 +6859,13 @@ module.exports.prototype.mount = function (styles) {
 module.exports.prototype.search = function (query) {
 	var t0 = performance.now();
 	var filtered = this.styles;
+
+	if (!this.styles || !this.styles.length) {
+		this.state.setState({
+			query: query
+		});
+		return;
+	}
 
 	if (query) {
 		var queryKeys = Object.keys(query);

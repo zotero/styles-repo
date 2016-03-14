@@ -27,6 +27,44 @@ var itemTpl = function(title, href, updated) {
 
 class AppComponent extends Component {
 	onRender() {
+		var formatsList,
+			fieldsList;
+
+		if(!this.state || this.state.fetching) {
+			formatsList = node('span').children('Loading...');
+		} else {
+			formatsList = node('ul')
+			.attrs({
+				className: 'formats-list'
+			})
+			.children(this.state && this.state.formats.sort().map(format => {
+				return node('li')
+					.attrs({
+						className: this.state && this.state.query.format == format ? 'format-active' : 'a' ,
+						onClick: e => this.onClick('format', e)
+					})
+					.children(format);
+			}))
+		}
+
+
+		if(!this.state || this.state.fetching) {
+			fieldsList = node('span').children('Loading...');
+		} else {
+			fieldsList = node('ul')
+				.attrs({
+					className: 'fields-list'
+				})
+				.children(this.state && this.state.fields.sort().map(field => {
+					return node('li')
+						.attrs({
+							className: this.state && this.state.query.fields && this.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a' ,
+							onClick: e => this.onClick('fields', e)
+						})
+						.children(field);
+				}))
+		}
+		
 		return node('div')
 			.children([
 				node('div')
@@ -45,6 +83,7 @@ class AppComponent extends Component {
 										.attrs({
 											type: 'search',
 											className: 'search-field',
+											id: 'search-field',
 											placeholder: 'Title Search',
 											value: this.state && this.state.query.initialSearch || '',
 											onKeyUp: e => this.onKeyUp(e),
@@ -76,42 +115,20 @@ class AppComponent extends Component {
 									.children([
 										node('strong')
 											.children('Format:'),
-										node('ul')
-											.attrs({
-												className: 'formats-list'
-											})
-											.children(this.state && this.state.formats.sort().map(format => {
-												return node('li')
-													.attrs({
-														className: this.state && this.state.query.format == format ? 'format-active' : 'a' ,
-														onClick: e => this.onClick('format', e)
-													})
-													.children(format);
-											}))
+										formatsList
 									]),
 								node('p')
 									.children([
 										node('strong')
 											.children('Fields:'),
-										node('ul')
-											.attrs({
-												className: 'fields-list'
-											})
-											.children(this.state && this.state.fields.sort().map(field => {
-												return node('li')
-													.attrs({
-														className: this.state && this.state.query.fields && this.state.query.fields.indexOf(field) > -1 ? 'field-active' : 'a' ,
-														onClick: e => this.onClick('fields', e)
-													})
-													.children(field);
-											}))
+										fieldsList
 									])
 							])
 					]),
-				node('p')
+				node('div')
 					.attrs({
-						className: 'style-count'
-					}).children(this.items ? `${this.items.length} styles found:` : null),
+						className: !this.state || this.state.fetching ? 'styles-loading' : 'style-count'
+					}).children(this.state && !this.state.fetching && this.items ? `${this.items.length} styles found:` : null),
 				node('ul')
 					.attrs({
 						className: 'style-list'
@@ -157,7 +174,11 @@ class AppComponent extends Component {
 	}
 
 	onMount() {
-		this._update();
+		this._update(() => {
+			console.info(this.getDomNode().querySelector('#search-field'));
+			this.getDomNode().querySelector('#search-field').focus();
+		});
+
 	}
 
 	onStateChange(diff, state) {
@@ -169,11 +190,14 @@ class AppComponent extends Component {
 		this._update();
 	}
 
-	_update() {
+	_update(cb) {
 		let t0 = performance.now();
 		this.update(() => {
 			let t1 = performance.now();
 			console.log('Rendering took ' + (t1 - t0) + ' ms.');
+			if(cb) {
+				cb.apply(this, arguments);
+			}
 		});
 	}
 
@@ -239,26 +263,33 @@ function fieldsAndFormats(styles, initial) {
 }
 
 module.exports = function ZSR(container) {
+
+	this.container = container;
+	
+
+	this.state = new AppState({
+		styles: [],
+		formats: [],
+		fields: [],
+		query: {},
+		fetching: true
+	});
+
+	this.mount();
+
+	let t0 = performance.now();
 	fetch('/json.php').then(response => {
 		if(response.status >= 200 && response.status < 300) {
 			response.json().then(styles => {
-				console.log(styles);
-				let t0 = performance.now();
-				this.container = container;
-				this.styles = styles;
-
-				[this.fieldGroups, this.formatGroups, this.fields, this.formats] = fieldsAndFormats(styles, true);
-
-				this.state = new AppState({
-					styles: this.styles,
-					formats: this.formats,
-					fields: this.fields,
-					query: {}
-				});
-
 				let t1 = performance.now();
-				console.log('Initial setup took ' + (t1 - t0) + ' ms.');
-				this.mount();
+				console.log('Fetching json took ' + (t1 - t0) + ' ms.');
+				this.state.setState({
+					fetching: false
+				});
+				
+				this.styles = styles;
+				[this.fieldGroups, this.formatGroups, this.fields, this.formats] = fieldsAndFormats(styles, true);
+				this.search(this.state.query);
 			});
 		}
 	})
@@ -278,6 +309,13 @@ module.exports.prototype.mount = function(styles) {
 module.exports.prototype.search = function(query) {
 	let t0 = performance.now();
 	var filtered = this.styles;
+
+	if(!this.styles || !this.styles.length) {
+		this.state.setState({
+			query: query	
+		});
+		return;
+	}
 
 	if(query) {
 		let queryKeys = Object.keys(query);
