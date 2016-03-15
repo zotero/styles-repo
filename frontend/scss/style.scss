@@ -4,6 +4,14 @@ $accent-background-color: #f0f0f0;
 $highlight-color: #6d95e0;
 $highlight-background-color: #bbcef1;
 
+$popover-color: #000;
+$popover-background-color: #fff;
+
+$button-color: #232323;
+$button-border-color: rgba(0, 0, 0, .65);
+$button-background-color: #fff;
+$button-background-color-active: #78c2ff;
+
 body {
 	font-family: Georgia, "Times New Roman", Times, serif;
 	margin: 0;
@@ -128,5 +136,46 @@ h2 {
 		position: relative;
 		left: -62px;
 		top: 0.5em;
+	}
+}
+
+.style-tooltip {
+	background: $popover-background-color;
+	border: 2px $popover-color solid;
+	box-shadow: 1px 2px 4px 1px rgba(0,0,0,.15);
+	color: $popover-color;
+	max-width: 700px;
+	min-width: 50px;
+	overflow: hidden;
+	padding: 5px 9px;
+	position: absolute;
+	text-align: left;
+	word-wrap: break-word;
+	z-index: 15000;
+}
+
+.style-view-source {
+	font-size: x-small;
+	line-height: .9em;
+	margin: 0 0 0 1.5em;
+	vertical-align: middle;
+	display: none;
+	text-decoration: none;
+	border: 1px solid $button-border-color;
+	border-radius: 4px;
+	padding: 2px 6px 3px;
+    text-align: center;
+    cursor: default;
+    color: $button-color;
+    background-color: $button-background-color;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .2);
+
+    &:active {
+    	background-color: $button-background-color-active;
+    }
+	
+	.style-list li:hover & {
+		display: inline-block;
 	}
 }

@@ -6567,14 +6567,11 @@ require('core-js/es6/promise');
 require('whatwg-fetch');
 
 
-var itemTpl = function itemTpl(title, href, updated) {
-	return (0, _vidom.node)('li').children([(0, _vidom.node)('a').key('title').attrs({
-		className: 'title',
-		href: href
-	}).children(title), (0, _vidom.node)('span').key('metadata').attrs({
-		className: 'metadata'
-	}).children('(' + updated + ')')]);
-};
+function isElementInViewport(el) {
+	var rect = el.getBoundingClientRect();
+
+	return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+}
 
 var AppComponent = function (_Component) {
 	_inherits(AppComponent, _Component);
@@ -6650,11 +6647,14 @@ var AppComponent = function (_Component) {
 	}, {
 		key: 'onKeyUp',
 		value: function onKeyUp(e) {
-			this._update();
-			var query = {
-				search: e.target.value
-			};
-			this.onQuery(query);
+			// don't react to modifier keys, tab and arrow keys
+			if ([9, 37, 38, 39, 40, 16, 17, 18, 91, 224].indexOf(e.nativeEvent.keyCode) === -1) {
+				this._update();
+				var query = {
+					search: e.target.value
+				};
+				this.onQuery(query);
+			}
 		}
 	}, {
 		key: 'onClick',
@@ -6691,17 +6691,70 @@ var AppComponent = function (_Component) {
 			var _this3 = this;
 
 			this._update(function () {
-				console.info(_this3.getDomNode().querySelector('#search-field'));
 				_this3.getDomNode().querySelector('#search-field').focus();
 			});
 		}
 	}, {
+		key: 'displayPreview',
+		value: function displayPreview(e) {
+			var _this4 = this;
+
+			if (!this.popover) {
+				this.popover = document.createElement('div');
+				this.popover.innerHTML = 'Loading preview...';
+				this.popover.classList.add('style-tooltip');
+				this.popover.style.top = e.target.offsetTop + 'px';
+				this.popover.style.left = e.target.offsetLeft + 0.5 * e.target.getBoundingClientRect().width + 'px';
+				this.popover.addEventListener('mouseout', this.hidePreview.bind(this));
+				document.body.appendChild(this.popover);
+				var index = e.target.getAttribute('data-index');
+				var style = this.state.styles[index];
+				var previewUrl = '/styles-files/previews/bib/' + (style.dependent ? 'dependent/' : '') + style.name + '.html';
+				fetch(previewUrl).then(function (response) {
+					if (response.status >= 200 && response.status < 300) {
+						response.text().then(function (text) {
+							_this4.popover.innerHTML = text;
+							if (!isElementInViewport(_this4.popover)) {
+								_this4.popover.style.top = e.target.offsetTop - _this4.popover.getBoundingClientRect().height + 'px';
+							}
+						});
+					}
+				});
+			}
+		}
+	}, {
+		key: 'hidePreview',
+		value: function hidePreview() {
+			if (!document.querySelectorAll('.style-tooltip:hover').length) {
+				document.body.removeChild(this.popover);
+				delete this.popover;
+			}
+		}
+	}, {
+		key: 'getItem',
+		value: function getItem(style, index) {
+			return (0, _vidom.node)('li').children([(0, _vidom.node)('a').key('title').attrs({
+				className: 'title',
+				href: style.href,
+				'data-index': index,
+				onMouseOver: this.displayPreview.bind(this),
+				onMouseOut: this.hidePreview.bind(this)
+			}).children(style.title), (0, _vidom.node)('span').key('metadata').attrs({
+				className: 'metadata'
+			}).children('(' + style.updatedFormatted + ')'), (0, _vidom.node)('a').attrs({
+				className: 'style-view-source',
+				href: style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1'
+			}).children('View Source')]);
+		}
+	}, {
 		key: 'onStateChange',
 		value: function onStateChange(diff, state) {
+			var _this5 = this;
+
 			this.state = state;
 			if (diff.indexOf('styles') > -1) {
-				this.items = this.state.styles.map(function (style) {
-					return itemTpl(style.title, style.href, style.updatedFormatted);
+				this.items = this.state.styles.map(function (style, index) {
+					return _this5.getItem(style, index);
 				});
 			}
 
@@ -6710,7 +6763,7 @@ var AppComponent = function (_Component) {
 	}, {
 		key: '_update',
 		value: function _update(cb) {
-			var _this4 = this,
+			var _this6 = this,
 			    _arguments = arguments;
 
 			var t0 = performance.now();
@@ -6718,7 +6771,7 @@ var AppComponent = function (_Component) {
 				var t1 = performance.now();
 				console.log('Rendering took ' + (t1 - t0) + ' ms.');
 				if (cb) {
-					cb.apply(_this4, _arguments);
+					cb.apply(_this6, _arguments);
 				}
 			});
 		}
@@ -6730,8 +6783,7 @@ var AppComponent = function (_Component) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppComponent).call(this));
 
 		_this.onQuery = (0, _debounce2.default)(function (query) {
-			var qqq = (0, _extend2.default)({}, _this.state.query, query);
-			_this.zsr.search(qqq);
+			_this.zsr.search((0, _extend2.default)({}, _this.state.query, query));
 		}, 150);
 		_this.zsr = zsr;
 		_this.state = _this.zsr.state;
@@ -6760,8 +6812,8 @@ var AppState = function () {
 		}
 	}, {
 		key: 'setState',
-		value: function setState(properties) {
-			var _this5 = this;
+		value: function setState(properties, silent) {
+			var _this7 = this;
 
 			var diff = [];
 			for (var i = 0, keys = Object.keys(properties); i < keys.length; i++) {
@@ -6770,9 +6822,11 @@ var AppState = function () {
 					this[keys[i]] = properties[keys[i]];
 				}
 			}
-			this._changeHandlers.forEach(function (handler) {
-				return handler(diff, _this5);
-			});
+			if (silent !== true) {
+				this._changeHandlers.forEach(function (handler) {
+					return handler(diff, _this7);
+				});
+			}
 		}
 	}]);
 
@@ -6805,7 +6859,7 @@ function fieldsAndFormats(styles, initial) {
 }
 
 module.exports = function ZSR(container) {
-	var _this6 = this;
+	var _this8 = this;
 
 	this.container = container;
 
@@ -6825,22 +6879,22 @@ module.exports = function ZSR(container) {
 			response.json().then(function (styles) {
 				var t1 = performance.now();
 				console.log('Fetching json took ' + (t1 - t0) + ' ms.');
-				_this6.state.setState({
+				_this8.state.setState({
 					fetching: false
-				});
+				}, true);
 
-				_this6.styles = styles;
+				_this8.styles = styles;
 
 				var _fieldsAndFormats = fieldsAndFormats(styles, true);
 
 				var _fieldsAndFormats2 = _slicedToArray(_fieldsAndFormats, 4);
 
-				_this6.fieldGroups = _fieldsAndFormats2[0];
-				_this6.formatGroups = _fieldsAndFormats2[1];
-				_this6.fields = _fieldsAndFormats2[2];
-				_this6.formats = _fieldsAndFormats2[3];
+				_this8.fieldGroups = _fieldsAndFormats2[0];
+				_this8.formatGroups = _fieldsAndFormats2[1];
+				_this8.fields = _fieldsAndFormats2[2];
+				_this8.formats = _fieldsAndFormats2[3];
 
-				_this6.search(_this6.state.query);
+				_this8.search(_this8.state.query);
 			});
 		}
 	});

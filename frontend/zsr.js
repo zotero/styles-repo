@@ -6,23 +6,16 @@ import extend from 'lodash/extend';
 import intersection from 'lodash/intersection';
 import { node, mountToDom, Component } from 'vidom';
 
-var itemTpl = function(title, href, updated) {
-	 return node('li')
-		.children([
-			node('a')
-				.key('title')
-				.attrs({
-					className: 'title',
-					href: href,
-				})
-				.children(title),
-			node('span')
-				.key('metadata')
-				.attrs({
-					className: 'metadata',
-				})
-				.children(`(${updated})`)
-		]);
+
+function isElementInViewport(el) {
+    let rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
 }
 
 class AppComponent extends Component {
@@ -138,11 +131,14 @@ class AppComponent extends Component {
 	}
 
 	onKeyUp(e) {
-		this._update();
-		let query = {
-			search: e.target.value
-		};
-		this.onQuery(query);
+		// don't react to modifier keys, tab and arrow keys
+		if([9, 37, 38, 39, 40, 16, 17, 18, 91, 224].indexOf(e.nativeEvent.keyCode) === -1) {
+			this._update();
+			let query = {
+				search: e.target.value
+			};
+			this.onQuery(query);	
+		}
 	}
 
 	onClick(type, e) {
@@ -175,16 +171,74 @@ class AppComponent extends Component {
 
 	onMount() {
 		this._update(() => {
-			console.info(this.getDomNode().querySelector('#search-field'));
 			this.getDomNode().querySelector('#search-field').focus();
 		});
+	}
 
+	displayPreview(e) {
+		if(!this.popover) {
+			this.popover = document.createElement('div');
+			this.popover.innerHTML = 'Loading preview...';
+			this.popover.classList.add('style-tooltip');
+			this.popover.style.top = `${e.target.offsetTop}px`;
+			this.popover.style.left = `${e.target.offsetLeft + 0.5 * e.target.getBoundingClientRect().width}px`;
+			this.popover.addEventListener('mouseout', this.hidePreview.bind(this))
+			document.body.appendChild(this.popover);
+			let index = e.target.getAttribute('data-index');
+			let style = this.state.styles[index];
+			let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
+			fetch(previewUrl).then(response => {
+				if(response.status >= 200 && response.status < 300) {
+					response.text().then(text => {
+						this.popover.innerHTML = text;
+						if(!isElementInViewport(this.popover)) {
+							this.popover.style.top = `${e.target.offsetTop - this.popover.getBoundingClientRect().height}px`;
+						}
+					})
+				}
+			});
+		}
+	}
+
+	hidePreview() {
+		if(!document.querySelectorAll('.style-tooltip:hover').length) {
+			document.body.removeChild(this.popover);
+			delete this.popover;
+		}
+	}
+
+	getItem(style, index) {
+		return node('li')
+			.children([
+				node('a')
+					.key('title')
+					.attrs({
+						className: 'title',
+						href: style.href,
+						'data-index': index,
+						onMouseOver: this.displayPreview.bind(this),
+						onMouseOut: this.hidePreview.bind(this)
+					})
+					.children(style.title),
+				node('span')
+					.key('metadata')
+					.attrs({
+						className: 'metadata',
+					})
+					.children(`(${style.updatedFormatted})`),
+				node('a')
+					.attrs({
+						className: 'style-view-source',
+						href: style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1'
+					})
+					.children('View Source')
+			]);
 	}
 
 	onStateChange(diff, state) {
 		this.state = state;
 		if(diff.indexOf('styles') > -1) {
-			this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updatedFormatted));
+			this.items = this.state.styles.map((style, index) => this.getItem(style, index));
 		}
 
 		this._update();
@@ -205,8 +259,7 @@ class AppComponent extends Component {
 	 constructor(zsr) {
 		super();
 		this.onQuery = debounce((query) => {
-			let qqq = extend({}, this.state.query, query);
-			this.zsr.search(qqq);
+			this.zsr.search(extend({}, this.state.query, query));
 		}, 150);
 	 	this.zsr = zsr;
 	 	this.state = this.zsr.state
@@ -225,7 +278,7 @@ class AppState {
 		this._changeHandlers.push(callback);	
 	}
 
-	setState(properties) {
+	setState(properties, silent) {
 		let diff = [];
 		for(let i=0, keys=Object.keys(properties); i<keys.length; i++) {
 			if(this[keys[i]] !== properties[keys[i]]) {
@@ -233,7 +286,9 @@ class AppState {
 				this[keys[i]] = properties[keys[i]];
 			}
 		}
-		this._changeHandlers.forEach(handler => handler(diff, this));
+		if(silent !== true) {
+			this._changeHandlers.forEach(handler => handler(diff, this));	
+		}
 	}
 }
 
@@ -285,7 +340,7 @@ module.exports = function ZSR(container) {
 				console.log('Fetching json took ' + (t1 - t0) + ' ms.');
 				this.state.setState({
 					fetching: false
-				});
+				}, true);
 				
 				this.styles = styles;
 				[this.fieldGroups, this.formatGroups, this.fields, this.formats] = fieldsAndFormats(styles, true);
