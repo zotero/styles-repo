@@ -6844,6 +6844,26 @@ var AppState = function () {
 				this._changeHandlers.forEach(function (handler) {
 					return handler(diff, _this7);
 				});
+				if (window.history && window.history.replaceState) {
+					var historyEntry = [];
+					if (properties.query.search && properties.query.search.length) {
+						historyEntry.push('q=' + encodeURIComponent(properties.query.search));
+					}
+
+					if (properties.query.fields && properties.query.fields.length) {
+						historyEntry.push('fields=' + encodeURIComponent(properties.query.fields));
+					}
+
+					if (properties.query.format && properties.query.format.length) {
+						historyEntry.push('format=' + encodeURIComponent(properties.query.format));
+					}
+
+					if (properties.query.dependent !== null) {
+						historyEntry.push('dependent=' + encodeURIComponent(properties.query.dependent));
+					}
+
+					window.history.replaceState(null, '', window.location.pathname + (historyEntry.length ? '?' + historyEntry.join('&') : ''));
+				}
 			}
 		}
 	}]);
