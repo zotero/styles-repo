@@ -245,7 +245,7 @@ class AppComponent extends Component {
 					.attrs({
 						className: 'metadata',
 					})
-					.children(`(${style.updatedFormatted})`)
+					.children(`(${style.updated})`)
 			]);
 	}
 
@@ -278,7 +278,7 @@ class AppComponent extends Component {
 	 	this.zsr = zsr;
 	 	this.state = this.zsr.state
 	 	this.state.onChange(this.onStateChange.bind(this));
-	 	this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updatedFormatted));
+	 	this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updated));
 	 }
 }
 
@@ -347,7 +347,7 @@ module.exports = function ZSR(container) {
 	this.mount();
 
 	let t0 = performance.now();
-	fetch('/json.php').then(response => {
+	fetch('/styles-files/styles.json').then(response => {
 		if(response.status >= 200 && response.status < 300) {
 			response.json().then(styles => {
 				let t1 = performance.now();

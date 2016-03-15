@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /*
     ***** BEGIN LICENSE BLOCK *****
@@ -24,39 +25,32 @@
     ***** END LICENSE BLOCK *****
 */
 
-require('../include/config.inc.php');
-require('../include/static.inc.php');
-require('../include/Styles_Repo.inc.php');
+error_reporting(E_ALL);
+ini_set("display_errors", true);
 
-$uri = $_SERVER['REQUEST_URI'];
-// Strip query string
-$mainURI = preg_replace('/\?.*/', '', $uri);
+ini_set('include_path', '.:' . dirname(dirname(__FILE__)) . '/include');
+require('config.inc.php');
+require('Styles.inc.php');
+require("Styles_Repo.inc.php");
 
+$targetPath = ROOT_PATH . 'htdocs/styles-files/styles.json';
 
 $cacheValues = Styles_Repo::getCacheValues();
-	
-if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
-			&& $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $cacheValues['lastModified'])
-		|| (isset($_SERVER['HTTP_IF_NONE_MATCH'])
-			&& trim($_SERVER['HTTP_IF_NONE_MATCH']) == $cacheValues['etag'])) {
-	header("HTTP/1.1 304 Not Modified");
-	exit;
-}
-
 $styleList = Styles_Repo::getAllStyles();
-$searchString = isset($_GET['q']) ? $_GET['q'] : '';
+$mainURI = 'https://www.zotero.org/styles';
 
-header("Last-Modified: {$cacheValues['lastModified']}");
-header('ETag: "' . $cacheValues['etag'] . '"');
-header('Content-Type: application/json');
-$numStyles = number_format(sizeOf($styleList));
-$pureArray = [];
+$stylesData = [];
 foreach($styleList as $key => $style) {
+	$styleData = [];
 	date_default_timezone_set('UTC');
-	$styleList[$key]['updatedFormatted'] = date("Y-m-d H:i:s", strtotime($styleList[$key]['updated']));
-	$styleList[$key]['href'] = $mainURI . (substr($mainURI, -1) == '/' ? '' : '/') . $styleList[$key]['name'];
+	$styleData['title'] = $styleList[$key]['title'];
+	$styleData['name'] = $styleList[$key]['name'];
+	$styleData['dependent'] = $styleList[$key]['dependent'];
+	$styleData['categories'] = $styleList[$key]['categories'];
+	$styleData['updated'] = date("Y-m-d H:i:s", strtotime($styleList[$key]['updated']));
+	$styleData['href'] = $mainURI . (substr($mainURI, -1) == '/' ? '' : '/') . $styleList[$key]['name'];
+	$stylesData[] = $styleData;
 }
-print(json_encode($styleList));
+
+file_put_contents($targetPath, json_encode($stylesData));
 ?>
-
-

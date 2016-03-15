@@ -6762,7 +6762,7 @@ var AppComponent = function (_Component) {
 				href: style.href
 			}).children(style.title), (0, _vidom.node)('span').key('metadata').attrs({
 				className: 'metadata'
-			}).children('(' + style.updatedFormatted + ')')]);
+			}).children('(' + style.updated + ')')]);
 		}
 	}, {
 		key: 'onStateChange',
@@ -6807,7 +6807,7 @@ var AppComponent = function (_Component) {
 		_this.state = _this.zsr.state;
 		_this.state.onChange(_this.onStateChange.bind(_this));
 		_this.items = _this.state.styles.map(function (style) {
-			return itemTpl(style.title, style.href, style.updatedFormatted);
+			return itemTpl(style.title, style.href, style.updated);
 		});
 		return _this;
 	}
@@ -6892,7 +6892,7 @@ module.exports = function ZSR(container) {
 	this.mount();
 
 	var t0 = performance.now();
-	fetch('/json.php').then(function (response) {
+	fetch('/styles-files/styles.json').then(function (response) {
 		if (response.status >= 200 && response.status < 300) {
 			response.json().then(function (styles) {
 				var t1 = performance.now();
