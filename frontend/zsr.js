@@ -18,6 +18,10 @@ function isElementInViewport(el) {
     );
 }
 
+function closest(el, fn) {
+	return el && (fn(el) ? el : closest(el.parentNode, fn));
+}
+
 class AppComponent extends Component {
 	onRender() {
 		var formatsList,
@@ -176,7 +180,10 @@ class AppComponent extends Component {
 	}
 
 	displayPreview(e) {
-		if(!this.popover) {
+		let listElement = closest(e.target, el => el.tagName === 'LI');
+		let style = this.state.styles[listElement.getAttribute('data-index')];
+
+		if(e.target.classList.contains('title') && !this.popover) {
 			this.popover = document.createElement('div');
 			this.popover.innerHTML = 'Loading preview...';
 			this.popover.classList.add('style-tooltip');
@@ -184,8 +191,6 @@ class AppComponent extends Component {
 			this.popover.style.left = `${e.target.offsetLeft + 0.5 * e.target.getBoundingClientRect().width}px`;
 			this.popover.addEventListener('mouseout', this.hidePreview.bind(this))
 			document.body.appendChild(this.popover);
-			let index = e.target.getAttribute('data-index');
-			let style = this.state.styles[index];
 			let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
 			fetch(previewUrl).then(response => {
 				if(response.status >= 200 && response.status < 300) {
@@ -198,26 +203,41 @@ class AppComponent extends Component {
 				}
 			});
 		}
+
+		if(e.target.tagName === 'LI' & !this.sourceButton) {
+			this.sourceButton = document.createElement('a');
+			this.sourceButton.href = style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1';
+			this.sourceButton.classList.add('style-view-source');
+			this.sourceButton.innerText = 'View Source';
+			e.target.appendChild(this.sourceButton);
+		}
 	}
 
 	hidePreview() {
-		if(!document.querySelectorAll('.style-tooltip:hover').length) {
+		if(this.popover && !document.querySelectorAll('.style-tooltip:hover, .title:hover').length) {
 			document.body.removeChild(this.popover);
 			delete this.popover;
+		}
+
+		if(this.sourceButton && !document.querySelectorAll('li:hover').length) {
+			this.sourceButton.parentNode.removeChild(this.sourceButton);
+			delete this.sourceButton;
 		}
 	}
 
 	getItem(style, index) {
 		return node('li')
+			.attrs({
+				'data-index': index,
+				onMouseOver: this.displayPreview.bind(this),
+				onMouseOut: this.hidePreview.bind(this)
+			})
 			.children([
 				node('a')
 					.key('title')
 					.attrs({
 						className: 'title',
-						href: style.href,
-						'data-index': index,
-						onMouseOver: this.displayPreview.bind(this),
-						onMouseOut: this.hidePreview.bind(this)
+						href: style.href
 					})
 					.children(style.title),
 				node('span')
@@ -225,13 +245,7 @@ class AppComponent extends Component {
 					.attrs({
 						className: 'metadata',
 					})
-					.children(`(${style.updatedFormatted})`),
-				node('a')
-					.attrs({
-						className: 'style-view-source',
-						href: style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1'
-					})
-					.children('View Source')
+					.children(`(${style.updatedFormatted})`)
 			]);
 	}
 

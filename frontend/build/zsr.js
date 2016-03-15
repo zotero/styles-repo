@@ -6573,6 +6573,10 @@ function isElementInViewport(el) {
 	return rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 }
 
+function closest(el, fn) {
+	return el && (fn(el) ? el : closest(el.parentNode, fn));
+}
+
 var AppComponent = function (_Component) {
 	_inherits(AppComponent, _Component);
 
@@ -6699,7 +6703,12 @@ var AppComponent = function (_Component) {
 		value: function displayPreview(e) {
 			var _this4 = this;
 
-			if (!this.popover) {
+			var listElement = closest(e.target, function (el) {
+				return el.tagName === 'LI';
+			});
+			var style = this.state.styles[listElement.getAttribute('data-index')];
+
+			if (e.target.classList.contains('title') && !this.popover) {
 				this.popover = document.createElement('div');
 				this.popover.innerHTML = 'Loading preview...';
 				this.popover.classList.add('style-tooltip');
@@ -6707,8 +6716,6 @@ var AppComponent = function (_Component) {
 				this.popover.style.left = e.target.offsetLeft + 0.5 * e.target.getBoundingClientRect().width + 'px';
 				this.popover.addEventListener('mouseout', this.hidePreview.bind(this));
 				document.body.appendChild(this.popover);
-				var index = e.target.getAttribute('data-index');
-				var style = this.state.styles[index];
 				var previewUrl = '/styles-files/previews/bib/' + (style.dependent ? 'dependent/' : '') + style.name + '.html';
 				fetch(previewUrl).then(function (response) {
 					if (response.status >= 200 && response.status < 300) {
@@ -6721,30 +6728,41 @@ var AppComponent = function (_Component) {
 					}
 				});
 			}
+
+			if (e.target.tagName === 'LI' & !this.sourceButton) {
+				this.sourceButton = document.createElement('a');
+				this.sourceButton.href = style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1';
+				this.sourceButton.classList.add('style-view-source');
+				this.sourceButton.innerText = 'View Source';
+				e.target.appendChild(this.sourceButton);
+			}
 		}
 	}, {
 		key: 'hidePreview',
 		value: function hidePreview() {
-			if (!document.querySelectorAll('.style-tooltip:hover').length) {
+			if (this.popover && !document.querySelectorAll('.style-tooltip:hover, .title:hover').length) {
 				document.body.removeChild(this.popover);
 				delete this.popover;
+			}
+
+			if (this.sourceButton && !document.querySelectorAll('li:hover').length) {
+				this.sourceButton.parentNode.removeChild(this.sourceButton);
+				delete this.sourceButton;
 			}
 		}
 	}, {
 		key: 'getItem',
 		value: function getItem(style, index) {
-			return (0, _vidom.node)('li').children([(0, _vidom.node)('a').key('title').attrs({
-				className: 'title',
-				href: style.href,
+			return (0, _vidom.node)('li').attrs({
 				'data-index': index,
 				onMouseOver: this.displayPreview.bind(this),
 				onMouseOut: this.hidePreview.bind(this)
+			}).children([(0, _vidom.node)('a').key('title').attrs({
+				className: 'title',
+				href: style.href
 			}).children(style.title), (0, _vidom.node)('span').key('metadata').attrs({
 				className: 'metadata'
-			}).children('(' + style.updatedFormatted + ')'), (0, _vidom.node)('a').attrs({
-				className: 'style-view-source',
-				href: style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1'
-			}).children('View Source')]);
+			}).children('(' + style.updatedFormatted + ')')]);
 		}
 	}, {
 		key: 'onStateChange',
