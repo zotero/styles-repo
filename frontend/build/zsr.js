@@ -6746,7 +6746,7 @@ var AppComponent = function (_Component) {
 				delete this.popover;
 			}
 
-			if (this.sourceButton && !document.querySelectorAll('li:hover').length) {
+			if (this.sourceButton && !document.querySelectorAll('.style-tooltip:hover, li:hover').length) {
 				this.sourceButton.parentNode.removeChild(this.sourceButton);
 				delete this.sourceButton;
 			}
