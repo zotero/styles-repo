@@ -6637,6 +6637,7 @@ var AppComponent = function (_Component) {
 				className: 'search-unique'
 			}).children([(0, _vidom.node)('input').attrs({
 				type: 'checkbox',
+				checked: this.state && this.state.query.dependent !== null && typeof this.state.query.dependent !== 'undefined' && !this.state.query.dependent,
 				onChange: function onChange(e) {
 					return _this2.onClick('unique', e);
 				}
@@ -6858,7 +6859,7 @@ var AppState = function () {
 						historyEntry.push('format=' + encodeURIComponent(properties.query.format));
 					}
 
-					if (properties.query.dependent !== null) {
+					if (typeof properties.query.dependent !== 'undefined' && properties.query.dependent !== null) {
 						historyEntry.push('dependent=' + encodeURIComponent(properties.query.dependent));
 					}
 
@@ -6901,11 +6902,31 @@ module.exports = function ZSR(container) {
 
 	this.container = container;
 
+	var query = {};
+	var intialParsed = location.search.substr(1).split('&');
+	intialParsed.forEach(function (parsedItem) {
+		parsedItem = parsedItem.split('=');
+		query[decodeURIComponent(parsedItem[0])] = decodeURIComponent(parsedItem[1] || '');
+	});
+
+	if (query['fields']) {
+		query.fields = query.fields.split(',');
+	}
+
+	if (query['q']) {
+		query.initialSearch = query.search = query.q;
+		delete query.q;
+	}
+
+	if (query['dependent']) {
+		query['dependent'] = parseInt(query['dependent'], 10);
+	}
+
 	this.state = new AppState({
 		styles: [],
 		formats: [],
 		fields: [],
-		query: {},
+		query: query,
 		fetching: true
 	});
 

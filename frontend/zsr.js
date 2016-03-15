@@ -61,7 +61,7 @@ class AppComponent extends Component {
 						.children(field);
 				}))
 		}
-		
+
 		return node('div')
 			.children([
 				node('div')
@@ -96,6 +96,7 @@ class AppComponent extends Component {
 										node('input')
 											.attrs({
 												type: 'checkbox',
+												checked: this.state && this.state.query.dependent !== null && typeof this.state.query.dependent !== 'undefined' && !this.state.query.dependent,
 												onChange: e => this.onClick('unique', e)
 											}),
 										node('span')
@@ -316,7 +317,7 @@ class AppState {
 					historyEntry.push(`format=${encodeURIComponent(properties.query.format)}`);
 				}
 
-				if(properties.query.dependent !== null) {
+				if(typeof properties.query.dependent !== 'undefined' && properties.query.dependent !== null) {
 					historyEntry.push(`dependent=${encodeURIComponent(properties.query.dependent)}`);
 				}
 
@@ -358,13 +359,32 @@ function fieldsAndFormats(styles, initial) {
 module.exports = function ZSR(container) {
 
 	this.container = container;
-	
+
+	let query = {};
+	let intialParsed = location.search.substr(1).split('&');
+	intialParsed.forEach(parsedItem => {
+		parsedItem = parsedItem.split('=');
+		query[decodeURIComponent(parsedItem[0])] = decodeURIComponent(parsedItem[1] || '');
+	});
+
+	if(query['fields']) {
+		query.fields = query.fields.split(',');
+	}
+
+	if(query['q']) {
+		query.initialSearch = query.search = query.q;
+		delete query.q;
+	}
+
+	if(query['dependent']) {
+		query['dependent'] = parseInt(query['dependent'], 10);
+	}
 
 	this.state = new AppState({
 		styles: [],
 		formats: [],
 		fields: [],
-		query: {},
+		query: query,
 		fetching: true
 	});
 
