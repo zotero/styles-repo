@@ -109,7 +109,7 @@ export default class AppComponent extends Component {
 				node('div')
 					.attrs({
 						className: !this.state || this.state.fetching ? 'styles-loading' : 'style-count'
-					}).children(this.state && !this.state.fetching && this.items ? `${this.items.length} styles found:` : null),
+					}).children(this.state && !this.state.fetching && this.state.count ? `${this.state.count} styles found:` : null),
 				node('ul')
 					.attrs({
 						className: 'style-list'
@@ -209,12 +209,13 @@ export default class AppComponent extends Component {
 		}
 	}
 
-	getItem(style, index) {
+	getItem(style, index, visible) {
 		return node('li')
 			.attrs({
 				'data-index': index,
 				onMouseOver: this.displayPreview.bind(this),
-				onMouseOut: this.hidePreview.bind(this)
+				onMouseOut: this.hidePreview.bind(this),
+				className: style.visible ? 'style-visible' : 'style-hidden'
 			})
 			.children([
 				node('a')
@@ -234,11 +235,19 @@ export default class AppComponent extends Component {
 	}
 
 	onStateChange(diff, state) {
+		let t0 = performance.now();
 		this.state = state;
 		if(diff.indexOf('styles') > -1) {
-			this.items = this.state.styles.map((style, index) => this.getItem(style, index));
+			// this.items = this.state.styles.map((style, index) => this.getItem(style, index));
+			this.items = this.zsr.styles.map((style, index) => {
+				let visible = this.state.styles.indexOf(style) > -1;
+				return this.getItem(style, index, visible);
+			});
 		}
-
+		let t1 = performance.now();
+		if (process.env.NODE_ENV === 'development') {
+			console.log('Building a new virtual dom for items took ' + (t1 - t0) + ' ms.');
+		}
 		this._update();
 	}
 
@@ -263,6 +272,7 @@ export default class AppComponent extends Component {
 	 	this.zsr = zsr;
 	 	this.state = this.zsr.state
 	 	this.state.onChange(this.onStateChange.bind(this));
-	 	this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updated));
+	 	// this.items = this.state.styles.map(style => itemTpl(style.title, style.href, style.updated));
+	 	
 	 }
 }

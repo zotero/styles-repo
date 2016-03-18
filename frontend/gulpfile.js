@@ -77,7 +77,7 @@ gulp.task('js', function () {
 });
 
 gulp.task('dev', ['clean'], function() {
-	gulp.watch('./src/zsr.js', ['js']);
+	gulp.watch('./src/*.js', ['js']);
 	gulp.watch('./scss/*.scss', ['sass']);
 	return merge(getSass(true), getBuild(true));
 });

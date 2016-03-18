@@ -98,8 +98,12 @@ module.exports.prototype.mount = function(styles) {
 }
 
 module.exports.prototype.search = function(query) {
-	let t0 = performance.now();
-	var filtered = this.styles;
+	var t0 = performance.now();
+	var filtered;
+	var filteredCounter = this.styles.length;
+	var formats;
+	var fields;
+
 
 	if(!this.styles || !this.styles.length) {
 		this.state.setState({
@@ -109,32 +113,68 @@ module.exports.prototype.search = function(query) {
 	}
 
 	if(query) {
-		let queryKeys = Object.keys(query);
-		if(queryKeys.indexOf('format') > -1) {
-			filtered = this.formatGroups[query.format] || filtered;
+		let queryKeys = Object.keys(query),
+			queryFormat,
+			queryDependent,
+			queryFields,
+			querySearch;
+
+		fields = new Set();
+		formats = new Set();
+
+		if(queryKeys.indexOf('format') > -1 && query.format !== null) {
+			queryFormat = query.format;
 		}
 
 		if(queryKeys.indexOf('dependent') > -1 && query.dependent !== null) {
-			filtered = filtered.filter(item => !!query.dependent === !!item.dependent);
+			queryDependent = query.dependent;
 		}
 
-		if(queryKeys.indexOf('fields') > -1) {
-			filtered = filtered.filter(item => {
-				return intersection(query.fields, item.categories.fields).length === query.fields.length;
-			});
+		if(queryKeys.indexOf('fields') > -1 && query.fields.length) {
+			queryFields = query.fields;
 		}
 
-		if(queryKeys.indexOf('search') > -1 && queryKeys[queryKeys.indexOf('search')].length) {
-			filtered = filtered.filter(item => {
-				let queryLow = query.search.toLowerCase();
-				return item.name.toLowerCase().indexOf(queryLow) > -1
+		if(queryKeys.indexOf('search') > -1 && query.search !== null && query.search.length) {
+			querySearch = query.search;
+		}
+
+		filtered = this.styles.map(item => {
+			item.visible = true;
+
+			if(typeof queryFormat !== 'undefined') {
+				item.visible = item.visible && item.categories.format === queryFormat;
+			}
+			if(typeof queryDependent !== 'undefined') {
+				item.visible = item.visible && !!item.dependent === !!queryDependent;
+			}
+			if(typeof queryFields !== 'undefined') {
+				item.visible = item.visible && intersection(queryFields, item.categories.fields).length === queryFields.length	
+			}
+			if(typeof querySearch !== 'undefined') {
+				let queryLow = querySearch.toLowerCase();
+				item.visible = item.visible
+				&& (item.name.toLowerCase().indexOf(queryLow) > -1
 				|| item.title.toLowerCase().indexOf(queryLow) > -1
-				|| (item.titleShort && item.title.toLowerCase().indexOf(queryLow) > -1);
-			});
-		}
-	}
+				|| (item.titleShort && item.title.toLowerCase().indexOf(queryLow) > -1));
+			}
 
-	let [fields, formats] = fieldsAndFormats(filtered);
+			if(item.visible) {
+				item.categories.fields.forEach(field => {
+					fields.add(field);
+				});
+
+				formats.add(item.categories.format);			
+			} else {
+				filteredCounter--;
+			}
+
+			return item;
+
+		});		
+	} else {
+		fields = this.fields;
+		formats = this.formats;
+	}
 
 	let t1 = performance.now();
 	if(process.env.NODE_ENV === 'development') {
@@ -143,8 +183,9 @@ module.exports.prototype.search = function(query) {
 	
 	this.state.setState({
 		styles: filtered,
-		fields: fields,
-		formats: formats,
+		count: filteredCounter,
+		fields: Array.from(fields),
+		formats: Array.from(formats),
 		query: query
 	});
 }
