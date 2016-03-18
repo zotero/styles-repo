@@ -173,17 +173,21 @@ export default class AppComponent extends Component {
 			this.popover.classList.add('style-tooltip');
 			this.popover.style.top = `${e.target.offsetTop}px`;
 			this.popover.style.left = `${e.target.offsetLeft + 0.5 * e.target.getBoundingClientRect().width}px`;
+			this.popover.id = `preview-${style.name}-${style.dependent}`;
 			this.popover.addEventListener('mouseout', this.hidePreview.bind(this))
 			document.body.appendChild(this.popover);
+
 			let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
 			fetch(previewUrl).then(response => {
 				if(response.status >= 200 && response.status < 300) {
 					response.text().then(text => {
-						this.popover.innerHTML = text;
-						if(!isElementInViewport(this.popover)) {
-							this.popover.style.top = `${e.target.offsetTop - this.popover.getBoundingClientRect().height}px`;
+						if(this.popover && this.popover.id === `preview-${style.name}-${style.dependent}`) {
+							this.popover.innerHTML = text;
+							if(!isElementInViewport(this.popover)) {
+								this.popover.style.top = `${e.target.offsetTop - this.popover.getBoundingClientRect().height}px`;
+							}
 						}
-					})
+					});
 				}
 			});
 		}
