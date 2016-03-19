@@ -171,8 +171,8 @@ export default class AppComponent extends Component {
 			this.popover = document.createElement('div');
 			this.popover.innerHTML = 'Loading preview...';
 			this.popover.classList.add('style-tooltip');
-			this.popover.style.top = `${e.target.offsetTop}px`;
-			this.popover.style.left = `${e.target.offsetLeft + 0.5 * e.target.getBoundingClientRect().width}px`;
+			this.popover.style.top = `${e.nativeEvent.clientY}px`;
+			this.popover.style.left = `${e.nativeEvent.clientX + 10}px`;
 			this.popover.id = `preview-${style.name}-${style.dependent}`;
 			this.popover.addEventListener('mouseout', this.hidePreview.bind(this))
 			document.body.appendChild(this.popover);
@@ -192,12 +192,12 @@ export default class AppComponent extends Component {
 			});
 		}
 
-		if(e.target.tagName === 'LI' & !this.sourceButton) {
+		if(!this.sourceButton) {
 			this.sourceButton = document.createElement('a');
 			this.sourceButton.href = style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1';
 			this.sourceButton.classList.add('style-view-source');
 			this.sourceButton.innerText = 'View Source';
-			e.target.appendChild(this.sourceButton);
+			listElement.appendChild(this.sourceButton);
 		}
 	}
 
@@ -207,7 +207,7 @@ export default class AppComponent extends Component {
 			delete this.popover;
 		}
 
-		if(this.sourceButton && !document.querySelectorAll('.style-tooltip:hover, li:hover').length) {
+		if(this.sourceButton && !document.querySelectorAll('.style-tooltip:hover, li:hover, .title:hover').length) {
 			this.sourceButton.parentNode.removeChild(this.sourceButton);
 			delete this.sourceButton;
 		}
