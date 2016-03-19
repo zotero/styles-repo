@@ -36,6 +36,7 @@ module.exports = function ZSR(container) {
 	this.container = container;
 	let query = {};
 	let intialParsed = location.search.substr(1).split('&');
+	let propSearchField = this.container.querySelector('.search-field');
 	intialParsed.forEach(parsedItem => {
 		parsedItem = parsedItem.split('=');
 		query[decodeURIComponent(parsedItem[0])] = decodeURIComponent(parsedItem[1] || '');
@@ -45,8 +46,13 @@ module.exports = function ZSR(container) {
 		query.fields = query.fields.split(',');
 	}
 
-	if(query['q']) {
-		query.initialSearch = query.search = query.q;
+	if(query['q'] || (propSearchField && propSearchField.value)) {
+		// on slow connection handle user input from before js loaded
+		if(propSearchField && propSearchField.value) {
+			query.initialSearch = query.search = propSearchField.value;
+		} else {
+			query.initialSearch = query.search = query.q;
+		}
 		delete query.q;
 	}
 
@@ -61,6 +67,8 @@ module.exports = function ZSR(container) {
 		query: query,
 		fetching: true
 	});
+
+	this.container.innerHTML = '';
 
 	this.mount();
 
@@ -100,7 +108,7 @@ module.exports.prototype.mount = function(styles) {
 module.exports.prototype.search = function(query) {
 	var t0 = performance.now();
 	var filtered;
-	var filteredCounter = this.styles.length;
+	var filteredCounter = this.styles && this.styles.length || 0;
 	var formats;
 	var fields;
 
