@@ -171,11 +171,10 @@ export default class AppComponent extends Component {
 			this.popover = document.createElement('div');
 			this.popover.innerHTML = 'Loading preview...';
 			this.popover.classList.add('style-tooltip');
-			this.popover.style.top = `${e.nativeEvent.clientY}px`;
-			this.popover.style.left = `${e.nativeEvent.clientX + 10}px`;
+			this.popover.style.top = `${e.nativeEvent.pageY}px`;
+			this.popover.style.left = `${e.nativeEvent.pageX}px`;
 			this.popover.id = `preview-${style.name}-${style.dependent}`;
-			this.popover.addEventListener('mouseout', this.hidePreview.bind(this))
-			document.body.appendChild(this.popover);
+			listElement.appendChild(this.popover);
 
 			let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
 			fetch(previewUrl).then(response => {
@@ -184,7 +183,7 @@ export default class AppComponent extends Component {
 						if(this.popover && this.popover.id === `preview-${style.name}-${style.dependent}`) {
 							this.popover.innerHTML = text;
 							if(!isElementInViewport(this.popover)) {
-								this.popover.style.top = `${e.target.offsetTop - this.popover.getBoundingClientRect().height}px`;
+								this.popover.style.top = `${e.target.offsetTop - this.popover.getBoundingClientRect().height + 10}px`;
 							}
 						}
 					});
@@ -201,15 +200,23 @@ export default class AppComponent extends Component {
 		}
 	}
 
-	hidePreview() {
-		if(this.popover && !document.querySelectorAll('.style-tooltip:hover, .title:hover').length) {
-			document.body.removeChild(this.popover);
-			delete this.popover;
+	hidePreview(e) {
+		e = e.nativeEvent || e;
+		let rt = e.toElement || e.relatedTarget;
+
+		if(this.popover) {
+			let relatedWithinTooltip = !!closest(rt, el => el && el.classList && el.classList.contains('style-tooltip'));
+			if(!relatedWithinTooltip) {
+				this.popover.parentNode.removeChild(this.popover);
+				delete this.popover;
+			}
 		}
 
-		if(this.sourceButton && !document.querySelectorAll('.style-tooltip:hover, li:hover, .title:hover').length) {
-			this.sourceButton.parentNode.removeChild(this.sourceButton);
-			delete this.sourceButton;
+		if(this.sourceButton) {
+			if(!rt || (rt && !rt.classList.contains('style-view-source'))) {
+				this.sourceButton.parentNode.removeChild(this.sourceButton);
+				delete this.sourceButton;
+			}
 		}
 	}
 
