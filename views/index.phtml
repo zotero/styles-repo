@@ -24,24 +24,42 @@
 */
 ?><!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-		<title>Zotero Style Repository</title>
-		<link rel="stylesheet" type="text/css" href="<?=staticFile('/styles-files/css/style.css')?>"/>
-	</head>
-	
-	<body>
-		<div class="page-wrapper">
-			<h1>Zotero Style Repository</h1>
-			
-			<p>Here you can find <a href="http://citationstyles.org/">Citation Style Language</a> 1.0.1 citation styles for use with <a href="http://www.zotero.org/">Zotero</a> and other CSL 1.0.1–compatible software. For more information on using CSL styles with Zotero, see the <a href="http://www.zotero.org/support/styles">Zotero wiki</a>.</p>
 
-			<div id="zsr-container"></div>
-		</div>
-		
-		<script src="<?=staticFile('/styles-files/js/zsr.js')?>"></script>
-		<script>
-			var zsr = new ZSR(document.getElementById('zsr-container'));
-		</script>
-	</body>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Zotero Style Repository</title>
+    <link rel="stylesheet" type="text/css" href="<?=staticFile('/styles-files/css/style.css')?>" />
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <h1>Zotero Style Repository</h1>
+        <p>Here you can find <a href="http://citationstyles.org/">Citation Style Language</a> 1.0.1 citation styles for use with <a href="http://www.zotero.org/">Zotero</a> and other CSL 1.0.1–compatible software. For more information on using CSL styles with Zotero, see the <a href="http://www.zotero.org/support/styles">Zotero wiki</a>.</p>
+        <div id="zsr-container">
+            <div>
+                <div class="search-pane">
+                    <div class="search-pane-col-1">
+                        <h2>Style Search</h2>
+                        <p>
+                            <input type="search" class="search-field" id="search-field" placeholder="Title Search" autofocus="autofocus" value="<?=htmlspecialchars($searchString)?>">
+                        </p>
+                        <p>
+                            &nbsp;
+                        </p>
+                    </div>
+                    <div class="search-pane-col-2">
+                        <p><strong>Format:</strong><span>Loading...</span></p>
+                        <p><strong>Fields:</strong><span>Loading...</span></p>
+                    </div>
+                </div>
+                <div class="styles-loading"></div>
+                <ul class="style-list"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="<?=staticFile('/styles-files/js/zsr.js')?>"></script>
+    <script>
+    var zsr = new ZSR(document.getElementById('zsr-container'));
+    </script>
+</body>
 </html>
