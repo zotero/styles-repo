@@ -21,4 +21,9 @@ AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application
 	ExpiresDefault "access plus 1 hour"
 </FilesMatch>
 
+<FilesMatch "\.html">
+	ExpiresActive on
+	ExpiresDefault "access plus 1 hour"
+</FilesMatch>
+
 FileETag none
