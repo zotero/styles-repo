@@ -234,6 +234,7 @@ export default class AppComponent extends Component {
 			// in modern browsers helps ensure we render visual feedback
 			if(requestAnimationFrame) {
 				window.document.body.classList.add('styles-processing');
+				window.document.body.offsetHeight; // reflow shenanigans
 				requestAnimationFrame(() => {
 					requestAnimationFrame(() => {
 						this.zsr.search(extend({}, this.state.query, query));

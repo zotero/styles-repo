@@ -60,11 +60,21 @@ h2 {
 			padding: 3px 6px;
 
 
-			&:hover,
-			&.field-active,
-			&.format-active {
+			&:hover {
 				background: $highlight-background-color;
 				border: 1px solid $highlight-color;
+			}
+
+			
+			&.field-active,
+			&.format-active {
+				border: 1px solid rgb(89, 139, 236);
+				color: #fff;
+				background: rgb(89, 139, 236);
+				&:hover {
+					background: rgb(187, 206, 241);
+					border: 1px solid rgb(109, 149, 224);
+				}
 			}
 		}
 	}
