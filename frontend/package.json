@@ -30,6 +30,7 @@
     "lodash": "^4.6.1",
     "merge-stream": "^1.0.0",
     "rimraf": "^2.5.2",
+    "tether-drop": "^1.4.2",
     "vidom": "^0.1.7",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

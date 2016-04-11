@@ -163,69 +163,10 @@ export default class AppComponent extends Component {
 		});
 	}
 
-	displayPreview(e) {
-		let listElement = closest(e.target, el => el.tagName === 'LI');
-		let style = this.state.styles[listElement.getAttribute('data-index')];
-
-		if(e.target.classList.contains('title') && !this.popover) {
-			this.popover = document.createElement('div');
-			this.popover.innerHTML = 'Loading preview...';
-			this.popover.classList.add('style-tooltip');
-			this.popover.style.top = `${e.nativeEvent.pageY}px`;
-			this.popover.style.left = `${e.nativeEvent.pageX}px`;
-			this.popover.id = `preview-${style.name}-${style.dependent}`;
-			listElement.appendChild(this.popover);
-
-			let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
-			fetch(previewUrl).then(response => {
-				if(response.status >= 200 && response.status < 300) {
-					response.text().then(text => {
-						if(this.popover && this.popover.id === `preview-${style.name}-${style.dependent}`) {
-							this.popover.innerHTML = text;
-							if(!isElementInViewport(this.popover)) {
-								this.popover.style.top = `${e.target.offsetTop - this.popover.getBoundingClientRect().height + 10}px`;
-							}
-						}
-					});
-				}
-			});
-		}
-
-		if(!this.sourceButton) {
-			this.sourceButton = document.createElement('a');
-			this.sourceButton.href = style.href + (style.href.indexOf('?') == -1 ? '?' : '&') + 'source=1';
-			this.sourceButton.classList.add('style-view-source');
-			this.sourceButton.innerText = 'View Source';
-			listElement.appendChild(this.sourceButton);
-		}
-	}
-
-	hidePreview(e) {
-		e = e.nativeEvent || e;
-		let rt = e.toElement || e.relatedTarget;
-
-		if(this.popover) {
-			let relatedWithinTooltip = !!closest(rt, el => el && el.classList && el.classList.contains('style-tooltip'));
-			if(!relatedWithinTooltip) {
-				this.popover.parentNode.removeChild(this.popover);
-				delete this.popover;
-			}
-		}
-
-		if(this.sourceButton) {
-			if(!rt || (rt && !rt.classList.contains('style-view-source'))) {
-				this.sourceButton.parentNode.removeChild(this.sourceButton);
-				delete this.sourceButton;
-			}
-		}
-	}
-
 	getItem(style, index, visible) {
 		return node('li')
 			.attrs({
-				'data-index': index,
-				onMouseOver: this.displayPreview.bind(this),
-				onMouseOut: this.hidePreview.bind(this)
+				'data-index': index
 			})
 			.children([
 				node('a')
@@ -240,8 +181,14 @@ export default class AppComponent extends Component {
 					.attrs({
 						className: 'metadata',
 					})
-					.children(`(${style.updated})`)
-			]);
+					.children(`(${style.updated})`),
+				node('a')
+					.attrs({
+						className: 'style-view-source',
+						href: style.href + '?source=1'
+					})
+					.children('View Source')
+			])
 	}
 
 	onStateChange(diff, state) {
