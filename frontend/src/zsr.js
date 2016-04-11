@@ -1,10 +1,14 @@
 'use strict';
 require('core-js/es6/promise');
 require('whatwg-fetch');
+// require('tether');
+// require('tether-drop');
+import Drop from 'tether-drop';
 import intersection from 'lodash/intersection';
 import { mountToDom } from 'vidom';
 import AppComponent from './AppComponent.js';
 import AppState from './AppState.js';
+import { closest } from './utils.js';
 
 
 function fieldsAndFormats(styles, initial) {
@@ -32,8 +36,9 @@ function fieldsAndFormats(styles, initial) {
 	return [Object.keys(fieldGroups), Object.keys(formatGroups)];
 }
 
-module.exports = function ZSR(container) {
+function ZSR(container) {
 	this.container = container;
+	this.tooltips = {};
 	let query = {};
 	let intialParsed = location.search.substr(1).split('&');
 	let propSearchField = this.container.querySelector('.search-field');
@@ -68,6 +73,14 @@ module.exports = function ZSR(container) {
 		fetching: true
 	});
 
+	this.state.onChange(() => {
+		let tooltipKeys = Object.keys(this.tooltips);
+		tooltipKeys.forEach(tooltipKey => {
+			this.tooltips[tooltipKey].destroy();
+			delete this.tooltips[tooltipKey];
+		});
+	});
+
 	this.container.innerHTML = '';
 
 	this.mount();
@@ -92,10 +105,61 @@ module.exports = function ZSR(container) {
 	})
 }
 
-module.exports.prototype.mount = function(styles) {
+ZSR.prototype.mount = function(styles) {
 	let t0 = performance.now();
 	let ac = new AppComponent(this);
 
+	this.container.addEventListener('mouseover', ev => {
+		let element = ev.target;
+		let listEl = closest(element, el => el.hasAttribute && el.hasAttribute('data-index'));
+		if(!listEl) {
+			return;
+		}
+		let index = listEl.getAttribute('data-index');
+		
+		if(element.classList.contains('title')) {
+			if(!this.tooltips[index]) {
+				this.tooltips[index] = new Drop({
+					target: element,
+					content: 'Loading Preview...',
+					classes: 'style-tooltip',
+					openOn: 'hover',
+					closeDelay: 50
+				});
+
+				let style = this.styles[index];
+				let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
+				fetch(previewUrl).then(response => {
+					if(response.status >= 200 && response.status < 300) {
+						response.text().then(text => {
+							this.tooltips[index].content.innerHTML = text;
+							this.tooltips[index].position();
+						});
+					}
+				});
+				this.tooltips[index].open();
+			}
+		}
+
+		// if(element.classList.contains('style-wrapper')) {
+			// if(!this.tooltips[`source-${index}`]) {
+				// this.tooltips[`source-${index}`] = new Drop({
+						// target: element,
+						// position: 'right middle',
+						// content: 'Source',
+						// classes: 'style-view-source',
+						// openOn: 'hover',
+						// closeDelay: 100
+					// });
+				// this.tooltips[`source-${index}`].open();
+			// }
+		// }
+		
+	});
+
+	this.container.addEventListener('mouseout', ev => {
+
+	});
 	
 	mountToDom(this.container, ac, () => {
 		let t1 = performance.now();
@@ -105,7 +169,7 @@ module.exports.prototype.mount = function(styles) {
 	});
 }
 
-module.exports.prototype.search = function(query) {
+ZSR.prototype.search = function(query) {
 	var t0 = performance.now();
 	var filtered;
 	var filteredCounter = this.styles && this.styles.length || 0;
@@ -198,3 +262,7 @@ module.exports.prototype.search = function(query) {
 	});
 }
 
+window.ZSR = ZSR;
+// window.TetherTooltip = TetherTooltip;
+
+module.exports = ZSR;

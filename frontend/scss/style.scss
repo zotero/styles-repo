@@ -80,6 +80,7 @@ h2 {
 	li {
 		margin-bottom: .6em;
 		line-height: 1.2em;
+		display: inline-list-item;
 	}
 
 	.metadata {
@@ -139,7 +140,7 @@ h2 {
 	}
 }
 
-.style-tooltip {
+.drop.style-tooltip {
 	background: $popover-background-color;
 	border: 2px $popover-color solid;
 	box-shadow: 1px 2px 4px 1px rgba(0,0,0,.15);
@@ -152,6 +153,12 @@ h2 {
 	text-align: left;
 	word-wrap: break-word;
 	z-index: 15000;
+	display: none;
+	margin-left: 20px;
+
+	&.drop-open {
+		display: block;
+	}
 }
 
 .style-view-source {
@@ -159,7 +166,6 @@ h2 {
 	border: 1px solid $button-border-color;
 	font-size: x-small;
 	line-height: .9em;
-	margin: 0 0 0 1.5em;
 	padding: 2px 6px 3px;
 	text-decoration: none;
 	vertical-align: middle;
@@ -169,6 +175,13 @@ h2 {
 	color: $button-color;
 	cursor: default;
 	text-align: center;
+	margin-left: 10px;
+	display: none;
+
+	li:hover & {
+		display: inline;
+	}
+	
 
 	&:active {
 		background-color: $button-background-color-active;

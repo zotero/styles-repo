@@ -29,7 +29,7 @@ function getBuild(dev) {
 	var b = browserify({
 		debug: true,
 		entries: './src/zsr.js',
-		standalone: "ZSR",
+		//standalone: "ZSR",
 		globalTransform: true,
 		transform: [
 			['babelify', {
