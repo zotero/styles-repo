@@ -53,6 +53,11 @@ export default class AppComponent extends Component {
 					}).children([
 						node('div')
 							.attrs({
+								className: 'search-pane-loading-indicator'
+							})
+							.children('Loading...'),
+						node('div')
+							.attrs({
 								className: 'search-pane-col-1'
 							})
 							.children([
@@ -219,13 +224,25 @@ export default class AppComponent extends Component {
 			if(cb) {
 				cb.apply(this, arguments);
 			}
+			window.document.body.classList.remove('styles-processing');
 		});
 	}
 
 	 constructor(zsr) {
 		super();
 		this.onQuery = debounce((query) => {
-			this.zsr.search(extend({}, this.state.query, query));
+			// in modern browsers helps ensure we render visual feedback
+			if(requestAnimationFrame) {
+				window.document.body.classList.add('styles-processing');
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						this.zsr.search(extend({}, this.state.query, query));
+					});
+				});
+			} else {
+				window.document.body.classList.add('styles-processing');
+				this.zsr.search(extend({}, this.state.query, query));
+			}
 		}, 150);
 	 	this.zsr = zsr;
 	 	this.state = this.zsr.state

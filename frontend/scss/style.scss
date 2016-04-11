@@ -44,6 +44,7 @@ h2 {
 	padding: 0 1em;
 	display: flex;
 	flex-direction: row;
+	position: relative;
 
 	.fields-list,
 	.formats-list {
@@ -68,6 +69,22 @@ h2 {
 		}
 	}
 }
+
+.search-pane-loading-indicator {
+	margin: 0;
+	background: #b50000;
+	padding: .1em .2em .2em .6em;
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: #fff;
+	display: none;
+
+	.styles-processing & {
+		display: block;
+	}
+}
+
 
 .search-field {
 	font-size: 16px;

@@ -1,8 +1,6 @@
 'use strict';
 require('core-js/es6/promise');
 require('whatwg-fetch');
-// require('tether');
-// require('tether-drop');
 import Drop from 'tether-drop';
 import intersection from 'lodash/intersection';
 import { mountToDom } from 'vidom';
@@ -139,26 +137,7 @@ ZSR.prototype.mount = function(styles) {
 				});
 				this.tooltips[index].open();
 			}
-		}
-
-		// if(element.classList.contains('style-wrapper')) {
-			// if(!this.tooltips[`source-${index}`]) {
-				// this.tooltips[`source-${index}`] = new Drop({
-						// target: element,
-						// position: 'right middle',
-						// content: 'Source',
-						// classes: 'style-view-source',
-						// openOn: 'hover',
-						// closeDelay: 100
-					// });
-				// this.tooltips[`source-${index}`].open();
-			// }
-		// }
-		
-	});
-
-	this.container.addEventListener('mouseout', ev => {
-
+		}		
 	});
 	
 	mountToDom(this.container, ac, () => {
@@ -261,8 +240,5 @@ ZSR.prototype.search = function(query) {
 		query: query
 	});
 }
-
-window.ZSR = ZSR;
-// window.TetherTooltip = TetherTooltip;
 
 module.exports = ZSR;
