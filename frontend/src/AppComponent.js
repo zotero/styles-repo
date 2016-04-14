@@ -197,7 +197,9 @@ export default class AppComponent extends Component {
 	}
 
 	onStateChange(diff, state) {
-		let t0 = performance.now();
+		if (process.env.NODE_ENV === 'development') {
+			var t0 = performance.now();
+		}
 		this.state = state;
 		if(diff.indexOf('styles') > -1) {
 			this.items = [];
@@ -207,18 +209,21 @@ export default class AppComponent extends Component {
 				}
 			});
 		}
-		let t1 = performance.now();
+		
 		if (process.env.NODE_ENV === 'development') {
+			let t1 = performance.now();
 			console.log('Building a new virtual dom for items took ' + (t1 - t0) + ' ms.');
 		}
 		this._update();
 	}
 
 	_update(cb) {
-		let t0 = performance.now();
+		if (process.env.NODE_ENV === 'development') {
+			var t0 = performance.now();
+		}
 		this.update(() => {
-			let t1 = performance.now();
 			if (process.env.NODE_ENV === 'development') {
+				let t1 = performance.now();
 				console.log('Rendering took ' + (t1 - t0) + ' ms.');
 			}
 			if(cb) {

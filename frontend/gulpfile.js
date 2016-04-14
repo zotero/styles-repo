@@ -33,7 +33,8 @@ function getBuild(dev) {
 		globalTransform: true,
 		transform: [
 			['babelify', {
-				'presets': ['es2015']
+				"plugins": ["transform-object-rest-spread", "transform-proto-to-assign"],
+				"presets": ["es2015-loose"]
 			}],
 		]
 	});
@@ -56,7 +57,7 @@ function getSass(dev) {
 		.pipe(gulpif(dev, sourcemaps.init({loadMaps: true})))
 		.pipe(sass())
 		.pipe(autoprefixer({
-				browsers: ['last 2 versions']
+				browsers: ['last 2 versions', 'IE 10']
 		}))
 		.pipe(filter('**/*.css'))
 		.pipe(gulpif(!dev, cssminify()))
