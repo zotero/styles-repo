@@ -1,6 +1,8 @@
 'use strict';
 require('core-js/es6/promise');
 require('whatwg-fetch');
+require('core-js/fn/set');
+require('core-js/fn/array/from');
 import Drop from 'tether-drop';
 import intersection from 'lodash/intersection';
 import { mountToDom } from 'vidom';
@@ -83,12 +85,14 @@ function ZSR(container) {
 
 	this.mount();
 
-	let t0 = performance.now();
+	if(process.env.NODE_ENV === 'development') {
+		var t0 = performance.now();
+	}
 	fetch('/styles-files/styles.json').then(response => {
 		if(response.status >= 200 && response.status < 300) {
 			response.json().then(styles => {
-				let t1 = performance.now();
 				if(process.env.NODE_ENV === 'development') {
+					let t1 = performance.now();
 					console.log('Fetching json took ' + (t1 - t0) + ' ms.');
 				}	
 				this.state.setState({
@@ -104,7 +108,9 @@ function ZSR(container) {
 }
 
 ZSR.prototype.mount = function(styles) {
-	let t0 = performance.now();
+	if(process.env.NODE_ENV === 'development') {
+		var t0 = performance.now();
+	}
 	let ac = new AppComponent(this);
 
 	this.container.addEventListener('mouseover', ev => {
@@ -141,15 +147,17 @@ ZSR.prototype.mount = function(styles) {
 	});
 	
 	mountToDom(this.container, ac, () => {
-		let t1 = performance.now();
 		if(process.env.NODE_ENV === 'development') {
+			let t1 = performance.now();
 			console.log('Mounting vidom took ' + (t1 - t0) + ' ms.');	
 		}
 	});
 }
 
 ZSR.prototype.search = function(query) {
-	var t0 = performance.now();
+	if(process.env.NODE_ENV === 'development') {
+		var t0 = performance.now();
+	}
 	var filtered;
 	var filteredCounter = this.styles && this.styles.length || 0;
 	var formats;
@@ -227,8 +235,8 @@ ZSR.prototype.search = function(query) {
 		formats = this.formats;
 	}
 
-	let t1 = performance.now();
 	if(process.env.NODE_ENV === 'development') {
+		let t1 = performance.now();
 		console.log('Filtering took ' + (t1 - t0) + ' ms.');
 	}
 	

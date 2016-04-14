@@ -64,8 +64,11 @@ h2 {
 
 	.fields-list,
 	.formats-list {
-
 		list-style: none;
+		display: block;
+		width: 90%;
+		overflow: hidden;
+		height: auto;
 
 		li {
 			background-color: $search-pane-button-background-color;
@@ -141,6 +144,8 @@ h2 {
 }
 
 .search-pane-col-2 {
+	max-width: calc(100% - 260px);
+
 	p {
 		display: flex;
 		flex-direction: row;
