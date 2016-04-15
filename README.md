@@ -32,7 +32,14 @@ Run setup scripts:
     ./fetch-schema
     ./generate-index
     ./generate-previews
+    ./generate-json
 
-Set generate-index and generate-previews to run periodically via cron.
+Set generate-index, generate-previews and generate-json to run periodically via cron.
 
 The main page for the style repository is "/htdocs/styles.php". Configure paths and citeproc URL in "/include/config.inc.php"
+
+
+Frontend
+--------
+
+To work on the frontend of the application run `npm install` followed by `npm start` inside the **frontend** directory. This will generate development version of the frontend library with additional metrics and debug infromation. These files should not be checked in into the repository, instead use `npm run build` to produce distribution ready files.
