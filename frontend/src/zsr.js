@@ -1,8 +1,10 @@
+/*global process*/
+
 'use strict';
-require('core-js/es6/promise');
-require('whatwg-fetch');
-require('core-js/fn/set');
-require('core-js/fn/array/from');
+import 'core-js/es6/promise';
+import 'whatwg-fetch';
+import 'core-js/fn/set';
+import 'core-js/fn/array/from';
 import Drop from 'tether-drop';
 import intersection from 'lodash/intersection';
 import { mountToDom } from 'vidom';
@@ -36,7 +38,7 @@ function fieldsAndFormats(styles, initial) {
 	return [Object.keys(fieldGroups), Object.keys(formatGroups)];
 }
 
-function ZSR(container) {
+export default function ZSR(container) {
 	this.container = container;
 	this.tooltips = {};
 	let query = {};
@@ -104,10 +106,10 @@ function ZSR(container) {
 				this.search(this.state.query);
 			});
 		}
-	})
+	});
 }
 
-ZSR.prototype.mount = function(styles) {
+ZSR.prototype.mount = function() {
 	if(process.env.NODE_ENV === 'development') {
 		var t0 = performance.now();
 	}
@@ -152,7 +154,7 @@ ZSR.prototype.mount = function(styles) {
 			console.log('Mounting vidom took ' + (t1 - t0) + ' ms.');	
 		}
 	});
-}
+};
 
 ZSR.prototype.search = function(query) {
 	if(process.env.NODE_ENV === 'development') {
@@ -207,7 +209,7 @@ ZSR.prototype.search = function(query) {
 				item.visible = item.visible && !!item.dependent === !!queryDependent;
 			}
 			if(typeof queryFields !== 'undefined') {
-				item.visible = item.visible && intersection(queryFields, item.categories.fields).length === queryFields.length	
+				item.visible = item.visible && intersection(queryFields, item.categories.fields).length === queryFields.length;
 			}
 			if(typeof querySearch !== 'undefined') {
 				let queryLow = querySearch.toLowerCase();
@@ -247,6 +249,4 @@ ZSR.prototype.search = function(query) {
 		formats: Array.from(formats),
 		query: query
 	});
-}
-
-module.exports = ZSR;
+};
