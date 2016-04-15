@@ -1,15 +1,31 @@
 'use strict';
 
+
+/**
+ * Maintains the state of the application and informs registered handlers
+ * of any changes that occurred. Also updates current URL to reflect the
+ * state of the application
+ */
 export default class AppState {
 	constructor(properties) {
 		this._changeHandlers = [];
 		this.setState(properties);
 	}
 
+	/**
+	 * Register handler. Handlers are called when state change occurs.
+	 * @param  {Function} callback - A callback function to call on change
+	 */
 	onChange(callback) {
 		this._changeHandlers.push(callback);	
 	}
 
+	/**
+	 * Updates current state of the application
+	 * @param {Object} properties - new status properties
+	 * @param {[type]} silent     - whether this update should be silent. History is
+	 *                            	not updated on silent updates.
+	 */
 	setState(properties, silent) {
 		let diff = [];
 		for(let i=0, keys=Object.keys(properties); i<keys.length; i++) {

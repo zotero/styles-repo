@@ -6,7 +6,15 @@ import debounce from 'lodash/debounce';
 import { node } from 'vidom';
 import { Component } from 'vidom';
 
+
+/**
+ * Maintain & update the virtual dom based on the current state of the application.
+ */
 export default class AppComponent extends Component {
+	/**
+	 * Update the virtual dom to reflect current state of the application
+	 * @return {Object} Virtual DOM Node
+	 */
 	onRender() {
 		var formatsList,
 			fieldsList;
@@ -124,6 +132,10 @@ export default class AppComponent extends Component {
 			]);
 	}
 
+	/**
+	 * Handle keyboard input
+	 * @param  {KeyboardEvent}
+	 */
 	onKeyUp(e) {
 		// don't react to modifier keys, tab and arrow keys
 		if([9, 37, 38, 39, 40, 16, 17, 18, 91, 224].indexOf(e.nativeEvent.keyCode) === -1) {
@@ -135,6 +147,11 @@ export default class AppComponent extends Component {
 		}
 	}
 
+	/**
+	 * Handle selecting fields and filters 
+	 * @param  {String} type - Type of the event 'field' or 'format'
+	 * @param  {MouseEvent} e
+	 */
 	onClick(type, e) {
 		let query = {};
 		let value = e.target.innerText;
@@ -163,12 +180,21 @@ export default class AppComponent extends Component {
 		this.onQuery(query);
 	}
 
+	/**
+	 * Handler called on the initial mount onto the real DOM.
+	 */
 	onMount() {
 		this._update(() => {
 			this.getDomNode().querySelector('#search-field').focus();
 		});
 	}
 
+	/**
+	 * Generate a virtual dom for a single style item
+	 * @param  {Object} - style 
+	 * @param  {Number} - index
+	 * @return {Object}	- virtual dom node
+	 */
 	getItem(style, index) {
 		return node('li')
 			.attrs({
@@ -197,6 +223,11 @@ export default class AppComponent extends Component {
 			]);
 	}
 
+	/**
+	 * Handler called on application state change
+	 * @param  {Array} diff   - list of all the properties that has changed
+	 * @param  {Object} state - new, up-to-date state object
+	 */
 	onStateChange(diff, state) {
 		if (process.env.NODE_ENV === 'development') {
 			var t0 = performance.now();
@@ -218,6 +249,11 @@ export default class AppComponent extends Component {
 		this._update();
 	}
 
+	/**
+	 * Minimal wrapper around Vidom's update function to give user a visual feedback
+	 * for the duration of the update.
+	 * @param  {Function} cb - callback function forwarded to Vidom's update function
+	 */
 	_update(cb) {
 		if (process.env.NODE_ENV === 'development') {
 			var t0 = performance.now();
@@ -234,23 +270,30 @@ export default class AppComponent extends Component {
 		});
 	}
 
+	/**
+	 * Handler called when user makes a query. Starts visual feedback
+	 * and triggers search based on current state and the new query parameters
+	 * @param  {Object} query - object containing query parameters
+	 */
+	onQuery(query) {
+		// in modern browsers helps ensure we render visual feedback
+		if(requestAnimationFrame) {
+			window.document.body.classList.add('styles-processing');
+			window.document.body.offsetHeight; // reflow shenanigans
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					this.zsr.search(extend({}, this.state.query, query));
+				});
+			});
+		} else {
+			window.document.body.classList.add('styles-processing');
+			this.zsr.search(extend({}, this.state.query, query));
+		}
+	}
+
 	constructor(zsr) {
 		super();
-		this.onQuery = debounce((query) => {
-			// in modern browsers helps ensure we render visual feedback
-			if(requestAnimationFrame) {
-				window.document.body.classList.add('styles-processing');
-				window.document.body.offsetHeight; // reflow shenanigans
-				requestAnimationFrame(() => {
-					requestAnimationFrame(() => {
-						this.zsr.search(extend({}, this.state.query, query));
-					});
-				});
-			} else {
-				window.document.body.classList.add('styles-processing');
-				this.zsr.search(extend({}, this.state.query, query));
-			}
-		}, 150);
+		this.onQuery = debounce(this.onQuery, 150);
 		this.zsr = zsr;
 		this.state = this.zsr.state;
 		this.state.onChange(this.onStateChange.bind(this));
