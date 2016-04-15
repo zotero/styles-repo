@@ -1,16 +1,14 @@
+/*eslint-env node */
 'use strict';
 
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
-const babel = require('gulp-babel');
-const concat = require('gulp-concat');
-const rename = require('gulp-rename');
 const uglify = require('gulp-uglify');
 const plumber = require('gulp-plumber');
 const filter = require('gulp-filter');
-const gulpif = require('gulp-if');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
+const gulpif = require('gulp-if');
 const buffer = require('vinyl-buffer');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
@@ -29,13 +27,13 @@ function getBuild(dev) {
 	var b = browserify({
 		debug: true,
 		entries: './src/zsr.js',
-		standalone: "ZSR",
+		standalone: 'ZSR',
 		globalTransform: true,
 		transform: [
 			['babelify', {
-				"plugins": ["transform-object-rest-spread", "transform-proto-to-assign"],
-				"presets": ["es2015-loose"]
-			}],
+				'plugins': ['transform-object-rest-spread', 'transform-proto-to-assign'],
+				'presets': ['es2015-loose']
+			}]
 		]
 	});
 
@@ -48,7 +46,7 @@ function getBuild(dev) {
 		.pipe(filter('**/*.js'))
 		.pipe(gulpif(!dev, uglify()))
 		.pipe(gulpif(dev, sourcemaps.write('./')))
-		.pipe(gulp.dest('./build/js/'))
+		.pipe(gulp.dest('./build/js/'));
 }
 
 function getSass(dev) {

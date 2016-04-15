@@ -1,9 +1,10 @@
+/*global process*/
+
 'use strict';
 import extend from 'lodash/extend';
 import debounce from 'lodash/debounce';
 import { node } from 'vidom';
 import { Component } from 'vidom';
-import { closest, isElementInViewport} from './utils.js';
 
 export default class AppComponent extends Component {
 	onRender() {
@@ -24,7 +25,7 @@ export default class AppComponent extends Component {
 						onClick: e => this.onClick('format', e)
 					})
 					.children(format);
-			}))
+			}));
 		}
 
 
@@ -42,7 +43,7 @@ export default class AppComponent extends Component {
 							onClick: e => this.onClick('fields', e)
 						})
 						.children(field);
-				}))
+				}));
 		}
 
 		return node('div')
@@ -168,7 +169,7 @@ export default class AppComponent extends Component {
 		});
 	}
 
-	getItem(style, index, visible) {
+	getItem(style, index) {
 		return node('li')
 			.attrs({
 				'data-index': index
@@ -184,7 +185,7 @@ export default class AppComponent extends Component {
 				node('span')
 					.key('metadata')
 					.attrs({
-						className: 'metadata',
+						className: 'metadata'
 					})
 					.children(`(${style.updated})`),
 				node('a')
@@ -193,7 +194,7 @@ export default class AppComponent extends Component {
 						href: style.href + '?source=1'
 					})
 					.children('View Source')
-			])
+			]);
 	}
 
 	onStateChange(diff, state) {
@@ -233,7 +234,7 @@ export default class AppComponent extends Component {
 		});
 	}
 
-	 constructor(zsr) {
+	constructor(zsr) {
 		super();
 		this.onQuery = debounce((query) => {
 			// in modern browsers helps ensure we render visual feedback
@@ -250,8 +251,8 @@ export default class AppComponent extends Component {
 				this.zsr.search(extend({}, this.state.query, query));
 			}
 		}, 150);
-	 	this.zsr = zsr;
-	 	this.state = this.zsr.state
-	 	this.state.onChange(this.onStateChange.bind(this));
-	 }
+		this.zsr = zsr;
+		this.state = this.zsr.state;
+		this.state.onChange(this.onStateChange.bind(this));
+	}
 }
