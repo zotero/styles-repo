@@ -12,33 +12,11 @@ import AppComponent from './AppComponent.js';
 import AppState from './AppState.js';
 import { closest } from './utils.js';
 
-
-function fieldsAndFormats(styles, initial) {
-	var formatGroups = {};
-	var fieldGroups = {};
-
-	styles.forEach(style => {
-		if(!formatGroups[style.categories.format]) {
-			formatGroups[style.categories.format] = [];
-		}
-		formatGroups[style.categories.format].push(style);
-
-		style.categories.fields.forEach(field => {
-			if(!fieldGroups[field]) {
-				fieldGroups[field] = [];
-			}
-			fieldGroups[field].push(style);
-		});
-	});
-
-	if(initial) {
-		return [fieldGroups, formatGroups, Object.keys(fieldGroups), Object.keys(formatGroups)];		
-	}
-
-	return [Object.keys(fieldGroups), Object.keys(formatGroups)];
-}
-
-export default function ZSR(container) {
+/**
+ * Application entry point
+ * @param {HTMLElement} container - DOM element where the application will be rendered
+ */
+function ZSR(container) {
 	this.container = container;
 	this.tooltips = {};
 	let query = {};
@@ -100,15 +78,28 @@ export default function ZSR(container) {
 				this.state.setState({
 					fetching: false
 				}, true);
+
+				this.fields = new Set();
+				this.formats = new Set();
 				
 				this.styles = styles;
-				[this.fieldGroups, this.formatGroups, this.fields, this.formats] = fieldsAndFormats(styles, true);
+				this.styles.forEach(style => {
+					this.formats.add(style.categories.format);
+					style.categories.fields.forEach(field => {
+						this.fields.add(field);
+					});
+				});
 				this.search(this.state.query);
 			});
 		}
 	});
 }
 
+/**
+ * Mount vidom to the actual DOM element and attach event listeners
+ * to fetch and display style previews on mouseover
+ * @return {[type]} [description]
+ */
 ZSR.prototype.mount = function() {
 	if(process.env.NODE_ENV === 'development') {
 		var t0 = performance.now();
@@ -156,6 +147,10 @@ ZSR.prototype.mount = function() {
 	});
 };
 
+/**
+ * Filter styles for given query and update the App State with the results
+ * @param  {Object} query - object defining search criteria. Can contain the following keys:
+ */
 ZSR.prototype.search = function(query) {
 	if(process.env.NODE_ENV === 'development') {
 		var t0 = performance.now();
@@ -250,3 +245,5 @@ ZSR.prototype.search = function(query) {
 		query: query
 	});
 };
+
+module.exports = ZSR; // eslint-disable-line no-undef
