@@ -18,8 +18,7 @@ AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application
 
 <FilesMatch "styles\.json$">
 	ExpiresActive on
-	ExpiresDefault "access plus 1 second"
-	Header set Cache-Control "must-revalidate"
+	ExpiresDefault "access plus 1 minute"
 </FilesMatch>
 
 <FilesMatch "\.html">
