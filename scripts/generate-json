@@ -1,0 +1,56 @@
+#!/usr/bin/php
+<?php
+/*
+    ***** BEGIN LICENSE BLOCK *****
+    
+    This file is part of the Zotero Style Repository.
+    
+    Copyright © 2011–2012 Center for History and New Media
+                          George Mason University, Fairfax, Virginia, USA
+                          http://zotero.org
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+    
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+    ***** END LICENSE BLOCK *****
+*/
+
+error_reporting(E_ALL);
+ini_set("display_errors", true);
+
+ini_set('include_path', '.:' . dirname(dirname(__FILE__)) . '/include');
+require('config.inc.php');
+require('Styles.inc.php');
+require("Styles_Repo.inc.php");
+
+$targetPath = ROOT_PATH . 'htdocs/styles-files/styles.json';
+
+$cacheValues = Styles_Repo::getCacheValues();
+$styleList = Styles_Repo::getAllStyles();
+$mainURI = 'https://www.zotero.org/styles';
+
+$stylesData = [];
+foreach($styleList as $key => $style) {
+	$styleData = [];
+	date_default_timezone_set('UTC');
+	$styleData['title'] = $styleList[$key]['title'];
+	$styleData['name'] = $styleList[$key]['name'];
+	$styleData['dependent'] = $styleList[$key]['dependent'];
+	$styleData['categories'] = $styleList[$key]['categories'];
+	$styleData['updated'] = date("Y-m-d H:i:s", strtotime($styleList[$key]['updated']));
+	$styleData['href'] = $mainURI . (substr($mainURI, -1) == '/' ? '' : '/') . $styleList[$key]['name'];
+	$stylesData[] = $styleData;
+}
+
+file_put_contents($targetPath, json_encode($stylesData));
+?>
