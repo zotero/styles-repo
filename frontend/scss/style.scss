@@ -213,6 +213,17 @@ h2 {
 	}
 }
 
+.drop-content {
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+.csl-bib-body {
+	margin-bottom: .6em;
+	position: relative;
+	word-wrap: normal;
+}
+
 .style-view-source {
 	background-color: $view-source-button-background-color;
 	border: 1px solid $view-source-button-border-color;
