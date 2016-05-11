@@ -171,12 +171,17 @@ ZSR.prototype.search = function(query) {
 	if(query) {
 		let queryKeys = Object.keys(query),
 			queryFormat,
+			queryId,
 			queryDependent,
 			queryFields,
 			querySearch;
 
 		fields = new Set();
 		formats = new Set();
+
+		if(queryKeys.indexOf('id') > -1 && query.id !== null) {
+			queryId = query.id;
+		}
 
 		if(queryKeys.indexOf('format') > -1 && query.format !== null) {
 			queryFormat = query.format;
@@ -192,10 +197,20 @@ ZSR.prototype.search = function(query) {
 
 		if(queryKeys.indexOf('search') > -1 && query.search !== null && query.search.length) {
 			querySearch = query.search;
+			let matches = querySearch.match(/id\:\s*([\w\-]*)/i);
+			if(matches) {
+				queryId = matches[1].trim();
+				querySearch = querySearch.slice(0, matches.index) + querySearch.slice(matches.index + matches[0].length);
+				querySearch = querySearch.trim();
+			}
 		}
 
 		filtered = this.styles.map(item => {
 			item.visible = true;
+
+			if(typeof queryId !== 'undefined') {
+				item.visible = item.visible && item.name === queryId;
+			}
 
 			if(typeof queryFormat !== 'undefined') {
 				item.visible = item.visible && item.categories.format === queryFormat;
