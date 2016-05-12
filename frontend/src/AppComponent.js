@@ -217,9 +217,15 @@ export default class AppComponent extends Component {
 				node('a')
 					.attrs({
 						className: 'style-view-source',
+						href: '?q=id:' + style.name
+					})
+					.children('Link'),
+				node('a')
+					.attrs({
+						className: 'style-view-source',
 						href: style.href + '?source=1'
 					})
-					.children('View Source')
+					.children('Source')
 			]);
 	}
 

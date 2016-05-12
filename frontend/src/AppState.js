@@ -38,6 +38,10 @@ export default class AppState {
 			this._changeHandlers.forEach(handler => handler(diff, this));
 			if(window.history && window.history.replaceState) {
 				let historyEntry = [];
+				if(properties.query.id && properties.query.id.length) {
+					historyEntry.push(`id=${encodeURIComponent(properties.query.id)}`);
+				}
+
 				if(properties.query.search && properties.query.search.length) {
 					historyEntry.push(`q=${encodeURIComponent(properties.query.search)}`);
 				}
