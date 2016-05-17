@@ -136,7 +136,7 @@ ZSR.prototype.mount = function() {
 				});
 				this.tooltips[index].open();
 			}
-		}		
+		}
 	});
 	
 	mountToDom(this.container, ac, () => {

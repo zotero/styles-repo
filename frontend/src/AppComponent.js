@@ -36,7 +36,6 @@ export default class AppComponent extends Component {
 			}));
 		}
 
-
 		if(!this.state || this.state.fetching) {
 			fieldsList = node('span').children('Loading...');
 		} else {
@@ -180,6 +179,14 @@ export default class AppComponent extends Component {
 		this.onQuery(query);
 	}
 
+	onSelectItem(e, item) {
+		let search = `id:${item.name}`;
+		this.onQuery({
+			search: search,
+			initialSearch: search //update input field as well
+		});
+	}
+
 	/**
 	 * Handler called on the initial mount onto the real DOM.
 	 */
@@ -216,8 +223,8 @@ export default class AppComponent extends Component {
 					.children(`(${style.updated})`),
 				node('a')
 					.attrs({
-						className: 'style-view-source',
-						href: '?q=id:' + style.name
+						className: 'style-individual-link',
+						onClick: e => this.onSelectItem(e, style)
 					})
 					.children('Link'),
 				node('a')
