@@ -194,7 +194,7 @@ h2 {
 	box-shadow: 1px 2px 4px 1px $popover-box-shadow-color;
 	color: $popover-color;
 	display: none;
-	margin-left: 20px;
+	margin-left: 40px;
 	max-width: 700px;
 	min-width: 50px;
 	overflow: hidden;
@@ -220,17 +220,26 @@ h2 {
 	word-wrap: normal;
 }
 
-.style-view-source {
+
+
+.style-view-source,
+.style-individual-link {
 	color: $view-source-button-color;
 	display: none;
 	font-size: 11px;
 	line-height: .9em;
-	margin-left: 10px;
+	margin-left: 2px;
 	padding: 2px 6px 3px;
 	text-align: center;
 	vertical-align: middle;
+	cursor: pointer;
+	text-decoration: underline;
 
 	li:hover & {
 		display: inline;
 	}
+}
+
+.style-individual-link {
+	margin-left: 10px;
 }
