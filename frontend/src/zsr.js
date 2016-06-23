@@ -82,6 +82,19 @@ function ZSR(container) {
 				this.fields = new Set();
 				this.formats = new Set();
 				
+				if(process.env.NODE_ENV === 'development') {
+					t0 = performance.now();
+				}
+
+				styles.sort(function(a, b) {
+					return a.title.localeCompare(b.title);
+				});
+
+				if(process.env.NODE_ENV === 'development') {
+					let t1 = performance.now();
+					console.log('Sorting styles took ' + (t1 - t0) + ' ms.');
+				}
+				
 				this.styles = styles;
 				this.styles.forEach(style => {
 					this.formats.add(style.categories.format);
