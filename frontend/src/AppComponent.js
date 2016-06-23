@@ -123,7 +123,8 @@ export default class AppComponent extends Component {
 					.attrs({
 						className: !this.state || this.state.fetching ? 'styles-loading' : 'style-count'
 					}).children(this.state && !this.state.fetching && this.state.count ? 
-						`${this.state.count} ${this.state.count > 1 ? 'styles' : 'style'} found:` : 'No styles found'
+						`${this.state.count} ${this.state.count > 1 ? 'styles' : 'style'} found:` :
+						this.state && this.state.fetching ? null : 'No styles found'
 					),
 				node('ul')
 					.attrs({
