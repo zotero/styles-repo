@@ -39,6 +39,12 @@ $cacheValues = Styles_Repo::getCacheValues();
 $styleList = Styles_Repo::getAllStyles();
 $mainURI = 'https://www.zotero.org/styles';
 
+
+usort($styleList, function($a, $b) {
+    $collator = new Collator('en_US');
+    return $collator->compare($a['title'], $b['title']);
+});
+
 $stylesData = [];
 foreach($styleList as $key => $style) {
 	$styleData = [];
