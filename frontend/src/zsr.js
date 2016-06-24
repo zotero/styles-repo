@@ -81,7 +81,7 @@ function ZSR(container) {
 
 				this.fields = new Set();
 				this.formats = new Set();
-				
+
 				this.styles = styles;
 				this.styles.forEach(style => {
 					this.formats.add(style.categories.format);
