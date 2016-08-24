@@ -50,6 +50,9 @@ foreach($styleList as $key => $style) {
 	$styleData = [];
 	date_default_timezone_set('UTC');
 	$styleData['title'] = $styleList[$key]['title'];
+    if($styleList[$key]['titleShort']) {
+        $styleData['titleShort'] = $styleList[$key]['titleShort'];
+    }
 	$styleData['name'] = $styleList[$key]['name'];
 	$styleData['dependent'] = $styleList[$key]['dependent'];
 	$styleData['categories'] = $styleList[$key]['categories'];
