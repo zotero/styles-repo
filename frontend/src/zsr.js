@@ -226,7 +226,7 @@ ZSR.prototype.search = function(query) {
 				item.visible = item.visible
 				&& (item.name.toLowerCase().indexOf(queryLow) > -1
 				|| item.title.toLowerCase().indexOf(queryLow) > -1
-				|| (item.titleShort && item.title.toLowerCase().indexOf(queryLow) > -1));
+				|| (item.titleShort && item.titleShort.toLowerCase().indexOf(queryLow) > -1));
 			}
 
 			if(item.visible) {
