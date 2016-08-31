@@ -125,11 +125,11 @@ ZSR.prototype.mount = function() {
 				});
 
 				let style = this.styles[index];
-				let previewUrl = `/styles-files/previews/bib/${style.dependent ? 'dependent/' : ''}${style.name}.html`;
+				let previewUrl = `/styles-files/previews/combined/${style.dependent ? 'dependent/' : ''}${style.name}.json`;
 				fetch(previewUrl).then(response => {
 					if(response.status >= 200 && response.status < 300) {
-						response.text().then(text => {
-							this.tooltips[index].content.innerHTML = text;
+						response.json().then(preview => {
+							this.tooltips[index].content.innerHTML = '<blockquote class="inline-citation">' + preview.citation + '</blockquote>' + preview.bibliography;
 							this.tooltips[index].position();
 						});
 					}

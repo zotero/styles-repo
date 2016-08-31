@@ -216,6 +216,26 @@ class Styles_Repo {
 		$path .= $name . '.json';
 		$preview = file_put_contents($path, json_encode($preview));
 	}
+
+	public static function setPreviewCombined($name, $previewCitation, $previewBibliography, $dependent=false) {
+		if (strpos($name, ".") !== false) {
+			throw new Exception("Invalid name '" . $name . "'");
+		}
+		
+		$path = ROOT_PATH . 'htdocs/styles-files/previews/combined/';
+		if ($dependent) {
+			$path .= 'dependent/';
+		}
+		$path .= $name . '.json';
+
+
+		$preview = array(
+			"citation" => $previewCitation,
+			"bibliography" => $previewBibliography
+		);
+
+		$preview = file_put_contents($path, json_encode($preview));
+	}
 	
 	
 	/**
