@@ -64,6 +64,14 @@ if (!is_dir($previewBibDir . 'dependent')) {
 	mkdir($previewBibDir . 'dependent');
 }
 
+$previewCombinedDir = $previewsDir . 'combined/';
+if (!is_dir($previewCombinedDir)) {
+	mkdir($previewCombinedDir);
+}
+if (!is_dir($previewCombinedDir . 'dependent')) {
+	mkdir($previewCombinedDir . 'dependent');
+}
+
 // Update independents
 foreach ($styles as $style) {
 	$name = $style['name'];
@@ -107,6 +115,7 @@ foreach ($styles as $style) {
 	
 	Styles_Repo::setPreviewCitations($name, $previewCitations);
 	Styles_Repo::setPreviewBibliography($name, $previewBib);
+	Styles_Repo::setPreviewCombined($name, $previewCitations, $previewBib);
 	$previews[$name]['citation'] = $previewCitations;
 	$previews[$name]['bib'] = $previewBib;
 	$independents[$name] = true;
@@ -147,6 +156,7 @@ foreach ($dependents as $dependent) {
 	
 	Styles_Repo::setPreviewCitations($name, $previewCitations, true);
 	Styles_Repo::setPreviewBibliography($name, $previewBib, true);
+	Styles_Repo::setPreviewCombined($name, $previewCitations, $previewBib, true);
 	$dependents[$name] = true;
 }
 
@@ -204,6 +214,30 @@ if ($dh = opendir($dir)) {
 		if (preg_match('/^(.+)\.html$/', $file, $matches)) {
 			if (!in_array($matches[1], $dependents)) {
 				Styles::log("Deleting bib preview dependents/$file");
+				unlink($dir . $file);
+			}
+		}
+	}
+}
+
+$dir = $previewCombinedDir;
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) != false) {
+		if (preg_match('/^(.+)\.html$/', $file, $matches)) {
+			if (!in_array($matches[1], $independents)) {
+				Styles::log("Deleting combined preview $file");
+				unlink($dir . $file);
+			}
+		}
+	}
+}
+
+$dir = $previewCombinedDir . 'dependent/';
+if ($dh = opendir($dir)) {
+	while (($file = readdir($dh)) != false) {
+		if (preg_match('/^(.+)\.html$/', $file, $matches)) {
+			if (!in_array($matches[1], $dependents)) {
+				Styles::log("Deleting combined preview dependents/$file");
 				unlink($dir . $file);
 			}
 		}
