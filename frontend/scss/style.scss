@@ -249,3 +249,13 @@ h2 {
 	padding: 0.5em;
 	margin: 0.5em 0;
 }
+
+.inline-citation ul,
+.inline-citation li {
+	margin: 0;
+	padding: 0;
+}
+
+.inline-citation ul {
+	list-style: none;
+}

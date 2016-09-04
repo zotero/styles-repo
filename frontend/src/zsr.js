@@ -129,7 +129,11 @@ ZSR.prototype.mount = function() {
 				fetch(previewUrl).then(response => {
 					if(response.status >= 200 && response.status < 300) {
 						response.json().then(preview => {
-							this.tooltips[index].content.innerHTML = '<blockquote class="inline-citation">' + preview.citation + '</blockquote>' + preview.bibliography;
+							this.tooltips[index].content.innerHTML =
+								'<ul class="inline-citation">'
+								+ '<li>' + preview.citation.join('</li><li>') + '</li>'
+								+ '</ul>'
+								+ preview.bibliography;
 							this.tooltips[index].position();
 						});
 					}
