@@ -4,5 +4,6 @@ scripts/trang.jar
 htdocs/styles-files/previews/*.html
 !htdocs/styles-files/previews/index.html
 htdocs/styles-files/styles.json
+frontend/build
 frontend/node_modules
 .DS_Store
