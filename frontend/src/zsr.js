@@ -130,10 +130,12 @@ ZSR.prototype.mount = function() {
 					if(response.status >= 200 && response.status < 300) {
 						response.json().then(preview => {
 							this.tooltips[index].content.innerHTML =
-								'<ul class="inline-citation">'
-								+ '<li>' + preview.citation.join('</li><li>') + '</li>'
-								+ '</ul>'
-								+ preview.bibliography;
+								'<div class="preview-content">'
+								+ '<h3>Citations</h3>'
+								+ '<p>' + preview.citation.join(' ') + '</p>'
+								+ '<h3>Bibliography</h3>'
+								+ preview.bibliography
+								+ '</div>';
 							this.tooltips[index].position();
 						});
 					}

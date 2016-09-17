@@ -193,5 +193,29 @@
     			]
     		}
     	}
-    ]
+    ],
+	"citationClusters": [
+			{
+				"citationItems": [
+					{
+						"id": 3886
+					},
+					{
+						"id": 3884
+					},
+					{
+						"id": 3882
+					},
+					{
+						"id": 3881
+					},
+					{
+						"id": 3877
+					}
+				],
+			"properties": {
+					"noteIndex": 1
+				}
+			}
+	]
 }

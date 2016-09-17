@@ -244,12 +244,17 @@ h2 {
 	margin-left: 10px;
 }
 
-.inline-citation {
-	background: $accent-background-color;
-	padding: 0.5em;
-	margin: 0.5em 0;
+.preview-content {
+	h3:first-child {
+		margin-top: .25em;
+	}
+	
+	h3 {
+		font-size: 18px;
+	}
 }
 
+/*
 .inline-citation ul,
 .inline-citation li {
 	margin: 0;
@@ -259,3 +264,4 @@ h2 {
 .inline-citation ul {
 	list-style: none;
 }
+*/
