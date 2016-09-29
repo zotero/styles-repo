@@ -2,62 +2,61 @@
 	"items": [{
 		"id": 3886,
 		"type": "article-journal",
-		"title": "Xylose fermentation by Saccharomyces cerevisiae",
-		"container-title": "Applied Microbiology and Biotechnology",
-		"page": "776-783",
-		"volume": "38",
-		"issue": "6",
-		"source": "link.springer.com",
-		"abstract": "We have performed a comparative study of xylose utilization in Saccharomyces cerevisiae transformants expressing two key enzymes in xylose metabolism, xylose reductase (XR) and xylitol dehydrogenase (XDH), and in a prototypic xylose-utilizing yeast, Pichia stipitis. In the absence of respiration (see text), baker's yeast cells convert half of the xylose to xylitol and ethanol, whereas P. stipilis cells display rather a homofermentative conversion of xylose to ethanol. Xylitol production by baker's yeast is interpreted as a result of the dual cofactor dependence of the XR and the generation of NADPH by the pentose phosphate pathway. Further limitations of xylose utilization in S. cerevisiae cells are very likely caused by an insufficient capacity of the non-oxidative pentose phosphate pathway, as indicated by accumulation of sedoheptulose-7-phosphate and the absence of fructose-1,6-bisphosphate and pyruvate accumulation. By contrast, uptake at high substrate concentrations probably does not limit xylose conversion in S. cerevisiae XYL1/XYL2 transformants.",
-		"URL": "http://link.springer.com/article/10.1007/BF00167144",
-		"DOI": "10.1007/BF00167144",
-		"ISSN": "0175-7598, 1432-0614",
-		"journalAbbreviation": "Appl. Microbiol. Biotechnol.",
-		"language": "en",
+		"title": "Mechanisms of Chromosome Number Evolution in Yeast",
+		"container-title": "PLOS Genet",
+		"page": "e1002190",
+		"volume": "7",
+		"issue": "7",
+		"source": "PLoS Journals",
+		"abstract": "Author Summary\nThe number of chromosomes in organisms often changes over evolutionary time. To study how the number changes, we compare several related species of yeast that share a common ancestor roughly 150 million years ago and have varying numbers of chromosomes. By inferring ancestral genome structures, we examine the changes in location of centromeres and telomeres, key elements that biologically define chromosomes. Their locations change over time by rearrangements of chromosome segments. By following these rearrangements, we trace an evolutionary path between existing centromeres and telomeres to those in the ancestral genomes, allowing us to identify the specific evolutionary events that caused changes in chromosome number. We show that, in these yeasts, chromosome number has generally decreased over time except for one notable exception: an event in an ancestor of several species where the whole genome was duplicated. Chromosome number reduction occurs by the simultaneous removal of a centromere from a chromosome and fusion of the rest of the chromosome to another that contains a working centromere. This process also results in telomere removal and the movement of genes from the ends of chromosomes to new locations in the middle of chromosomes.",
+		"URL": "http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1002190",
+		"DOI": "10.1371/journal.pgen.1002190",
+		"ISSN": "1553-7404",
+		"journalAbbreviation": "PLOS Genet",
 		"author": [{
-			"family": "Kötter",
-			"given": "Peter"
+			"family": "Gordon",
+			"given": "Jonathan L."
 		}, {
-			"family": "Ciriacy",
-			"given": "Michael"
+			"family": "Byrne",
+			"given": "Kevin P."
+		}, {
+			"family": "Wolfe",
+			"given": "Kenneth H."
 		}],
 		"issued": {
 			"date-parts": [
 				[
-					"1993",
-					3,
-					1
+					"2011",
+					7,
+					21
 				]
 			]
 		},
 		"accessed": {
 			"date-parts": [
 				[
-					"2014",
-					6,
-					3
+					"2016",
+					9,
+					29
 				]
 			]
 		}
 	}, {
 		"id": 3884,
-		"type": "article-newspaper",
-		"title": "Crisis puts tax moves into play",
-		"container-title": "The New York Times",
-		"section": "Business",
-		"source": "NYTimes.com",
-		"abstract": "Several tax breaks and provisions aimed at families and businesses, but also rural schools, have been tacked onto the financial bailout legislation.",
-		"URL": "http://www.nytimes.com/2008/10/02/business/02tax.html",
-		"ISSN": "0362-4331",
+		"type": "webpage",
+		"title": "The Secret Tesla Motors Master Plan (just between you and me)",
+		"container-title": "Tesla Blog",
+		"abstract": "Background: My day job is running a space transportation company called SpaceX, but on the side I am the chairman of Tesla Motors and help formulate the business and product strategy with Martin and the rest of the team. I have also been Tesla Motor&#39;s primary funding source from when the company was just three people and a business plan.",
+		"URL": "https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me",
 		"author": [{
-			"family": "Pear",
-			"given": "Robert"
+			"family": "Musk",
+			"given": "Elon"
 		}],
 		"issued": {
 			"date-parts": [
 				[
-					"2008",
-					10,
+					"2006",
+					8,
 					2
 				]
 			]
@@ -65,51 +64,13 @@
 		"accessed": {
 			"date-parts": [
 				[
-					"2014",
-					6,
-					3
+					"2016",
+					9,
+					29
 				]
 			]
 		}
-	}, {
-		"id": 3882,
-		"type": "patent",
-		"title": "Method and system for placing a purchase order via a communications network",
-		"abstract": "A method and system for placing an order to purchase an item via the Internet. The order is placed by a purchaser at a client system and received by a server system. The server system receives purchaser information including identification of the purchaser, payment information, and shipment information from the client system. The server system then assigns a client identifier to the client system and associates the assigned client identifier with the received purchaser information. The server system sends to the client system the assigned client identifier and an HTML document identifying the item and including an order button. The client system receives and stores the assigned client identifier and receives and displays the HTML document. In response to the selection of the order button, the client system sends to the server system a request to purchase the identified item. The server system receives the request and combines the purchaser information associated with the client identifier of the client system to generate an order to purchase the item in accordance with the billing and shipment information whereby the purchaser effects the ordering of the product by selection of the order button.",
-		"URL": "https://www.google.com/patents/US5960411",
-		"note": "U.S. Classification 705/26.81, 715/962, 705/26.8; International Classification G06Q30/00, G06Q20/00, G06Q10/00; Cooperative Classification G06Q30/06, G06Q20/04, G06Q30/0635, G06Q30/0605, G07F11/002, G06Q30/0633, G06Q10/087, G06Q20/12, G06Q30/04, G06Q30/0641, Y10S715/962; European Classification G06Q20/12, G06Q30/04, G06Q30/06, G06Q20/04, G07F11/00B, G06Q10/087, G06Q30/0633, G06Q30/0635, G06Q30/0605, G06Q30/0641",
-		"number": "US5960411 A",
-		"author": [{
-			"family": "Hartman",
-			"given": "Peri"
-		}, {
-			"family": "Bezos",
-			"given": "Jeffrey P."
-		}, {
-			"family": "Kaphan",
-			"given": "Shel"
-		}, {
-			"family": "Spiegel",
-			"given": "Joel"
-		}],
-		"issued": {
-			"date-parts": [
-				[
-					"1999",
-					9,
-					28
-				]
-			]
-		},
-		"submitted": {
-			"date-parts": [
-				[
-					"1997",
-					9,
-					12
-				]
-			]
-		}
+
 	}, {
 		"id": 3881,
 		"type": "chapter",
@@ -175,8 +136,6 @@
 			"id": 3886
 		}, {
 			"id": 3884
-		}, {
-			"id": 3882
 		}, {
 			"id": 3881
 		}, {
