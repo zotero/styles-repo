@@ -2,33 +2,37 @@
 	"items": [{
 		"id": 3886,
 		"type": "article-journal",
-		"title": "Mechanisms of Chromosome Number Evolution in Yeast",
-		"container-title": "PLOS Genet",
-		"page": "e1002190",
-		"volume": "7",
-		"issue": "7",
-		"source": "PLoS Journals",
-		"abstract": "Author Summary\nThe number of chromosomes in organisms often changes over evolutionary time. To study how the number changes, we compare several related species of yeast that share a common ancestor roughly 150 million years ago and have varying numbers of chromosomes. By inferring ancestral genome structures, we examine the changes in location of centromeres and telomeres, key elements that biologically define chromosomes. Their locations change over time by rearrangements of chromosome segments. By following these rearrangements, we trace an evolutionary path between existing centromeres and telomeres to those in the ancestral genomes, allowing us to identify the specific evolutionary events that caused changes in chromosome number. We show that, in these yeasts, chromosome number has generally decreased over time except for one notable exception: an event in an ancestor of several species where the whole genome was duplicated. Chromosome number reduction occurs by the simultaneous removal of a centromere from a chromosome and fusion of the rest of the chromosome to another that contains a working centromere. This process also results in telomere removal and the movement of genes from the ends of chromosomes to new locations in the middle of chromosomes.",
-		"URL": "http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1002190",
-		"DOI": "10.1371/journal.pgen.1002190",
-		"ISSN": "1553-7404",
-		"journalAbbreviation": "PLOS Genet.",
-		"author": [{
-			"family": "Gordon",
-			"given": "Jonathan L."
-		}, {
-			"family": "Byrne",
-			"given": "Kevin P."
-		}, {
-			"family": "Wolfe",
-			"given": "Kenneth H."
-		}],
+		"title": "An adaptable metric shapes perceptual space",
+		"container-title": "Current Biology",
+		"page": "1911-1915",
+		"volume": "26",
+		"issue": "14",
+		"source": "www.cell.com",
+		"URL": "http://www.cell.com/current-biology/abstract/S0960-9822(16)30544-9",
+		"DOI": "10.1016/j.cub.2016.05.047",
+		"ISSN": "0960-9822",
+		"journalAbbreviation": "Curr. Biol.",
+		"language": "en",
+		"author": [
+			{
+				"family": "Hisakata",
+				"given": "Rumi"
+			},
+			{
+				"family": "Nishida",
+				"given": "Shin'ya"
+			},
+			{
+				"family": "Johnston",
+				"given": "Alan"
+			}
+		],
 		"issued": {
 			"date-parts": [
 				[
-					"2011",
+					"2016",
 					7,
-					21
+					25
 				]
 			]
 		},
@@ -36,15 +40,15 @@
 			"date-parts": [
 				[
 					"2016",
-					9,
-					29
+					10,
+					3
 				]
 			]
 		}
 	}, {
 		"id": 3884,
 		"type": "webpage",
-		"title": "The Secret Tesla Motors Master Plan (just between you and me)",
+		"title": "The secret Tesla Motors master plan (just between you and me)",
 		"container-title": "Tesla Blog",
 		"abstract": "Background: My day job is running a space transportation company called SpaceX, but on the side I am the chairman of Tesla Motors and help formulate the business and product strategy with Martin and the rest of the team. I have also been Tesla Motor&#39;s primary funding source from when the company was just three people and a business plan.",
 		"URL": "https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me",
