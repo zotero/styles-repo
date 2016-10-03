@@ -13,20 +13,16 @@
 		"ISSN": "0960-9822",
 		"journalAbbreviation": "Curr. Biol.",
 		"language": "en",
-		"author": [
-			{
-				"family": "Hisakata",
-				"given": "Rumi"
-			},
-			{
-				"family": "Nishida",
-				"given": "Shin'ya"
-			},
-			{
-				"family": "Johnston",
-				"given": "Alan"
-			}
-		],
+		"author": [{
+			"family": "Hisakata",
+			"given": "Rumi"
+		}, {
+			"family": "Nishida",
+			"given": "Shin'ya"
+		}, {
+			"family": "Johnston",
+			"given": "Alan"
+		}],
 		"issued": {
 			"date-parts": [
 				[
