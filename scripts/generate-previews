@@ -41,6 +41,9 @@ $styles = Styles_Repo::getAllStyles();
 $independents = array();
 $dependents = array();
 $previews = array();
+$lookup = array();
+
+const FALLBACK_LOCALE = 'en-US';
 
 $data = json_decode(file_get_contents(ROOT_PATH . 'include/data/previews.json'));
 
@@ -75,10 +78,19 @@ if (!is_dir($previewCombinedDir . 'dependent')) {
 // Update independents
 foreach ($styles as $style) {
 	$name = $style['name'];
+	$lookup[$name] = $style;
+	$xml = new SimpleXMLElement($style['code']);
+
+	if($xml['default-locale']) {
+		$lookup[$name]['default-locale'] = $xml['default-locale'];
+	} else {
+		$lookup[$name]['default-locale'] = FALLBACK_LOCALE;
+	}
+
+	$lookup[$name]['xml'] = $xml;
 	
 	// Save dependents for later
 	if ($style['dependent']) {
-		$xml = new SimpleXMLElement($style['code']);
 		$xml->registerXPathNamespace("csl", "http://purl.org/net/xbiblio/csl");
 		$parent = $xml->xpath("/csl:style/csl:info/csl:link[@rel='independent-parent']");
 		if ($parent) {
@@ -121,7 +133,6 @@ foreach ($styles as $style) {
 	$independents[$name] = true;
 }
 
-
 // Update dependents with parent previews
 foreach ($dependents as $dependent) {
 	$name = $dependent['name'];
@@ -131,25 +142,42 @@ foreach ($dependents as $dependent) {
 	}
 	
 	$parentName = $dependent['parentName'];
+	$dependentStyle = $lookup[$name];
+	$parent = $lookup[$parentName];
 	
 	echo "============================\n\n";
 	echo "Generating preview for $name (dep)\n\n";
 	
 	$previewCitations = null;
 	$previewBib = null;
-	
-	if (isset($previews[$parentName])) {
-		$previewCitations = $previews[$parentName]['citation'];
-		$previewBib = $previews[$parentName]['bib'];
-	}
-	else {
-		if ($singleStyle) {
-			$previewCitations = Styles_Repo::getPreviewCitations($parentName);
-			$previewBib = Styles_Repo::getPreviewBibliography($parentName);
+	$okToUseParent = $dependentStyle["default-locale"] == $parent["default-locale"];
+
+	if($okToUseParent) {
+		if (isset($previews[$parentName])) {
+			$previewCitations = $previews[$parentName]['citation'];
+			$previewBib = $previews[$parentName]['bib'];
+		} else {
+			if ($singleStyle) {
+				$previewCitations = Styles_Repo::getPreviewCitations($parentName);
+				$previewBib = Styles_Repo::getPreviewBibliography($parentName);
+			}
+			
+			if (empty($previewCitations) || empty($previewBib)) {
+				Styles::log("Preview of parent $parentName not found");
+				continue;
+			}
 		}
-		
-		if (empty($previewCitations) || empty($previewBib)) {
-			Styles::log("Preview of parent $parentName not found");
+	} else {
+		$modifiedXML = clone $parent['xml'];
+		$modifiedXML['default-locale'] = $dependentStyle['default-locale'];
+
+		try {
+			$previewCitations = CSLPreview::getCitations($modifiedXML->asXML(), $data);
+			$previewBib = CSLPreview::getBibliography($modifiedXML->asXML(), $data);
+		}
+		catch (Exception $e) {
+			var_dump($e);
+			$preview = 'Error generating preview';
 			continue;
 		}
 	}
