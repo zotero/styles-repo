@@ -82,7 +82,7 @@ foreach ($styles as $style) {
 	$xml = new SimpleXMLElement($style['code']);
 
 	if($xml['default-locale']) {
-		$lookup[$name]['default-locale'] = $xml['default-locale'];
+		$lookup[$name]['default-locale'] = (string) $xml['default-locale'];
 	} else {
 		$lookup[$name]['default-locale'] = FALLBACK_LOCALE;
 	}
