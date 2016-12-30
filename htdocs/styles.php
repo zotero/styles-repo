@@ -110,7 +110,7 @@ if (!empty($csl)) {
 
 // Styles list
 else if (!empty($styleList)) {
-	$client = !empty($_SERVER['HTTP_USER_AGENT'] && strpos($_SERVER['HTTP_USER_AGENT'], "Zotero") === 0;
+	$client = !empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], "Zotero/") !== false;
 	require("../views/index.phtml");
 }
 
