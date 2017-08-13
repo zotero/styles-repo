@@ -71,52 +71,29 @@ if (isset($PATH_INFO[0])) {
 		header("HTTP/1.1 304 Not Modified");
 		exit;
 	}
-}
-// Style list
-else {
-	$cacheValues = Styles_Repo::getCacheValues();
 	
-	if ((isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
-				&& $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $cacheValues['lastModified'])
-			|| (isset($_SERVER['HTTP_IF_NONE_MATCH'])
-				&& trim($_SERVER['HTTP_IF_NONE_MATCH']) == $cacheValues['etag'])) {
-		header("HTTP/1.1 304 Not Modified");
-		exit;
+	// Single style
+	if (!empty($csl)) {
+		header("Last-Modified: " . $lastModified);
+		if (!empty($source)) {
+			header('Content-Type: text/xml');
+			header("Content-Disposition: inline; filename=$name.csl");
+		}
+		else {
+			header('Content-Type: application/vnd.citationstyles.style+xml');
+			header("Content-Disposition: attachment; filename=$name.csl");
+		}
+		echo $csl;
 	}
-	
-	$styleList = Styles_Repo::getAllStyles();
-	
-	$searchString = isset($_GET['q']) ? $_GET['q'] : '';
-	
-	header("Last-Modified: {$cacheValues['lastModified']}");
-	header('ETag: "' . $cacheValues['etag'] . '"');
-	$numStyles = number_format(sizeOf($styleList));
-}
-
-
-// Single style
-if (!empty($csl)) {
-	header("Last-Modified: " . $lastModified);
-	if (!empty($source)) {
-		header('Content-Type: text/xml');
-		header("Content-Disposition: inline; filename=$name.csl");
-	}
+	// Style not found
 	else {
-		header('Content-Type: application/vnd.citationstyles.style+xml');
-		header("Content-Disposition: attachment; filename=$name.csl");
+		header("HTTP/1.0 404 Not Found");
+		echo "Style not found";
 	}
-	echo $csl;
+	exit;
 }
 
 // Styles list
-else if (!empty($styleList)) {
-	$client = !empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], "Zotero/") !== false;
-	require("../views/index.phtml");
-}
-
-// Style not found
-else {
-	header("HTTP/1.0 404 Not Found");
-	echo "Style not found";
-}
-?>
+$searchString = isset($_GET['q']) ? $_GET['q'] : '';
+$client = !empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], "Zotero/") !== false;
+require("../views/index.phtml");
