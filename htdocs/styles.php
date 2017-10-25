@@ -52,7 +52,7 @@ if (isset($PATH_INFO[0])) {
 	$dependent = !empty($_GET['dep']);
 	$source = !empty($_GET['source']);
 	
-	if (!Styles_Repo::isValidName($name)) {
+	if (!Styles_Repo::isValidName($name) || isset($PATH_INFO[1])) {
 		header("HTTP/1.1 404 Not Found");
 		exit;
 	}
