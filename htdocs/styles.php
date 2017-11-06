@@ -48,6 +48,7 @@ if (!isset($PATH_INFO) || $PATH_INFO[0] == '') {
 
 // Single style
 if (isset($PATH_INFO[0])) {
+	header('Access-Control-Allow-Origin: *');
 	$name = $PATH_INFO[0];
 	$dependent = !empty($_GET['dep']);
 	$source = !empty($_GET['source']);
