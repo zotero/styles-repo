@@ -58,6 +58,12 @@ if (isset($PATH_INFO[0])) {
 		exit;
 	}
 	
+	$newName = Styles_Repo::getRenamedStyle($name);
+	if ($newName && $name != $newName) {
+		header("Location: $newName");
+		exit;
+	}
+	
 	$csl = Styles_Repo::getCode($name, $dependent);
 	// Dependent flag is optional
 	if ($csl) {

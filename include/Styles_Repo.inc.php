@@ -27,6 +27,8 @@
 require_once("Styles.inc.php");
 
 class Styles_Repo {
+	private static $renamedStyles;
+	
 	public static function getAllStyles() {
 		$styles = array();
 		$names = array();
@@ -136,6 +138,26 @@ class Styles_Repo {
 		}
 		
 		return STYLES_PATH . ($dependent ? 'dependent/' : '') . $name;
+	}
+	
+	
+	public static function getRenamedStyle($oldName) {
+		if (!self::$renamedStyles) {
+			// Get renamed styles from cache, GitHub, or disk
+			$renamed = apcu_fetch('renamed_styles');
+			if (!$renamed) {
+				if (defined('RENAMED_STYLES_URL')) {
+					error_log("Fetching " . RENAMED_STYLES_URL);
+					$renamed = file_get_contents(RENAMED_STYLES_URL);
+				}
+				if (!$renamed) {
+					$renamed = file_get_contents(ROOT_PATH . "include/renamed-styles.json");
+				}
+				apcu_store('renamed_styles', $renamed, 86400);
+			}
+			self::$renamedStyles = json_decode($renamed, true);
+		}
+		return self::$renamedStyles[$oldName] ?? false;
 	}
 	
 	
