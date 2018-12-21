@@ -18,7 +18,7 @@ AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application
 
 <FilesMatch "styles\.json$">
 	Header set Access-Control-Allow-Origin "*"
-	Header set Access-Control-Allow-Headers "Accept, If-Modified-Since"
+	Header set Access-Control-Allow-Headers "If-Modified-Since"
 	ExpiresActive on
 	ExpiresDefault "access plus 1 minute"
 </FilesMatch>
