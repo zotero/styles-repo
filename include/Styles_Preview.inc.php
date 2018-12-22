@@ -32,7 +32,7 @@ class CSLPreview {
 		
 		$url = "$server?responseformat=json&citations=1&bibliography=0";
 		
-		$data->styleXml = $code;
+		$data->styleXML = $code;
 		$json = json_encode($data);
 		
 		$response = self::callProcessor($url, $json);
@@ -62,7 +62,7 @@ class CSLPreview {
 		
 		$url = "$server?responseformat=json";
 		
-		$data->styleXml = $code;
+		$data->styleXML = $code;
 		$json = json_encode($data);
 		
 		$response = self::callProcessor($url, $json);
