@@ -49,6 +49,14 @@ if (!isset($PATH_INFO) || $PATH_INFO[0] == '') {
 // Single style
 if (isset($PATH_INFO[0])) {
 	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Headers: If-Modified-Since');
+	header('Cache-Control: max-age=900');
+
+	if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+		header("HTTP/1.1 200 OK");
+		exit;
+	}
+
 	$name = $PATH_INFO[0];
 	$dependent = !empty($_GET['dep']);
 	$source = !empty($_GET['source']);
