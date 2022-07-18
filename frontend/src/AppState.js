@@ -58,7 +58,9 @@ export default class AppState {
 				window.history.replaceState(
 					null,
 					'',
-					window.location.pathname + (historyEntry.length ? '?' + historyEntry.join('&') : '')
+					window.location.pathname
+						+ (historyEntry.length ? '?' + historyEntry.join('&') : '')
+						+ window.location.hash
 				);
 			}
 		}
