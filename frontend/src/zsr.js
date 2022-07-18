@@ -1,10 +1,5 @@
-/*global process*/
-
-'use strict';
-import 'core-js/es6/promise';
 import 'whatwg-fetch';
-import 'core-js/fn/set';
-import 'core-js/fn/array/from';
+
 import Drop from 'tether-drop';
 import intersection from 'lodash/intersection';
 import { mountToDom } from 'vidom';
@@ -267,4 +262,4 @@ ZSR.prototype.search = function(query) {
 	});
 };
 
-module.exports = ZSR; // eslint-disable-line no-undef
+export default ZSR;

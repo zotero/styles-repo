@@ -1,11 +1,7 @@
-/*global process*/
-
-'use strict';
 import extend from 'lodash/extend';
 import debounce from 'lodash/debounce';
 import { node } from 'vidom';
 import { Component } from 'vidom';
-
 
 /**
  * Maintain & update the virtual dom based on the current state of the application.

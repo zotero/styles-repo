@@ -1,6 +1,3 @@
-'use strict';
-
-
 /**
  * Maintains the state of the application and informs registered handlers
  * of any changes that occurred. Also updates current URL to reflect the

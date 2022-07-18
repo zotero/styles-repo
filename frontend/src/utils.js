@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Finds the first element that pasess function test by testing the element itself
  * and traversing up
