@@ -1,6 +1,3 @@
-'use strict';
-
-
 /**
  * Maintains the state of the application and informs registered handlers
  * of any changes that occurred. Also updates current URL to reflect the
@@ -61,7 +58,9 @@ export default class AppState {
 				window.history.replaceState(
 					null,
 					'',
-					window.location.pathname + (historyEntry.length ? '?' + historyEntry.join('&') : '')
+					window.location.pathname
+						+ (historyEntry.length ? '?' + historyEntry.join('&') : '')
+						+ window.location.hash
 				);
 			}
 		}
