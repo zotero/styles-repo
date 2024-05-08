@@ -55,13 +55,17 @@ export default class AppState {
 					historyEntry.push(`dependent=${encodeURIComponent(properties.query.dependent)}`);
 				}
 
-				window.history.replaceState(
-					null,
-					'',
-					window.location.pathname
-						+ (historyEntry.length ? '?' + historyEntry.join('&') : '')
-						+ window.location.hash
-				);
+				// Fails in XUL browser in Firefox 60, so wrap in try/catch
+				try {
+					window.history.replaceState(
+						null,
+						'',
+						window.location.pathname
+							+ (historyEntry.length ? '?' + historyEntry.join('&') : '')
+							+ window.location.hash
+					);
+				}
+				catch (e) {}
 			}
 		}
 	}
