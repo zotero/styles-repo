@@ -224,10 +224,13 @@ ZSR.prototype.search = function(query) {
 			}
 			if(typeof querySearch !== 'undefined') {
 				let queryLow = querySearch.toLowerCase();
+				let queryLowParts = queryLow.split(/\s+/);
 				item.visible = item.visible
-				&& (item.name.toLowerCase().indexOf(queryLow) > -1
-				|| item.title.toLowerCase().indexOf(queryLow) > -1
-				|| (item.titleShort && item.titleShort.toLowerCase().indexOf(queryLow) > -1));
+					&& queryLowParts.every((part) => {
+						return item.name.toLowerCase().includes(part)
+							|| item.title.toLowerCase().includes(part)
+							|| (item.titleShort && item.titleShort.toLowerCase().includes(part));
+					});
 			}
 
 			if(item.visible) {
