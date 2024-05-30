@@ -103,16 +103,11 @@ h2 {
 .search-pane-loading-indicator {
 	background: $search-pane-loading-indicator-background-color;
 	color: $search-pane-loading-indicator-color;
-	display: none;
 	margin: 0;
 	padding: .1em .2em .2em .6em;
 	position: absolute;
 	right: 0;
 	top: 0;
-
-	.styles-processing & {
-		display: block;
-	}
 }
 
 
@@ -188,7 +183,12 @@ h2 {
 	}
 }
 
-.drop.style-tooltip {
+.style-tooltip {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: max-content;
+
 	background: $popover-background-color;
 	border: 2px $popover-color solid;
 	box-shadow: 1px 2px 4px 1px $popover-box-shadow-color;
@@ -199,7 +199,6 @@ h2 {
 	min-width: 50px;
 	overflow: hidden;
 	padding: 5px 9px;
-	position: absolute;
 	text-align: left;
 	word-wrap: break-word;
 	z-index: 15000;
@@ -209,7 +208,7 @@ h2 {
 	}
 }
 
-.drop-content {
+.style-tooltip-content {
 	overflow: hidden;
 	word-wrap: break-word;
 }

@@ -6,4 +6,16 @@ const presets = [
 	}]
 ];
 
-module.exports = { presets };
+const plugins = [
+	["@babel/plugin-transform-react-jsx", {
+		"pragma": "h",
+		"pragmaFrag": "Fragment",
+	}],
+	[require.resolve('babel-plugin-jsx-pragmatic'), {
+		module: 'preact',
+		export: 'h',
+		import: 'h'
+	}]
+];
+
+module.exports = { plugins, presets };
