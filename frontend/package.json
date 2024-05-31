@@ -14,7 +14,7 @@
     "clean": "rimraf build lang",
     "devel:js": "rollup -c -w",
     "devel:scss": "for f in scss/*.scss; do sass --embed-source-map --watch $f build/css/`basename $f .scss`.css; done;",
-    "build:postprocess": "postcss build/css/style.css --use autoprefixer --use cssnano --no-map -r",
+    "build:postprocess": "postcss build/css/style.css --use autoprefixer --use cssnano --use postcss-prune-var --no-map -r",
     "start": "mkdir -p build && run-p 'devel:js -s' 'devel:scss -s'"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.38",
     "postcss-cli": "^11.0.0",
+    "postcss-prune-var": "^1.1.2",
     "rimraf": "^5.0.7",
     "rollup": "^4.18.0",
     "rollup-plugin-filesize": "^10.0.0",

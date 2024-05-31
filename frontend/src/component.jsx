@@ -463,7 +463,7 @@ const App = () => {
                     preview={state.previewsCache[state.showPreviewFor] ?? { fetching: true } }
                 /> 
                 </Fragment>
-            ) : <div className="styles-loading" /> }
+            ) : <StylesLoading /> }
         </Fragment>
     );
 }
@@ -507,6 +507,16 @@ const StylePreview = ({ preview, onMouseLeave }) => {
         </div>
     );
 };
+
+const StylesLoading = () => {
+    return (
+        <div className="styles-loading">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                <path stroke-width="1" stroke="currentColor" fill="none" d="M8,15c-3.866,0-7-3.134-7-7s3.134-7,7-7s7,3.134,7,7" />
+            </svg>    
+        </div>
+    );
+}
 
 
 export default App;
