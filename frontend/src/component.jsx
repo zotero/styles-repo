@@ -251,6 +251,10 @@ const App = () => {
     }, []);
 
     const handleStyleItemLinkClick = useCallback((e) => {
+        if (e.type === 'keydown' && !(e.key == 'Enter' || e.key == ' ')) {
+            return;
+        }
+        e.preventDefault();
         const styleName = e.target.closest('li').dataset.name;
         if (styleName) {
             dispatch({ type: 'QUERY', query: { search: `id:${styleName}` } });
@@ -488,7 +492,7 @@ const StyleItem = ({ style, onMouseEnter, onMouseLeave, onLinkClick }) => {
                 {style.title}
             </a>
             <span className="metadata">({style.updated})</span>
-            <a className="style-individual-link" onClick={ onLinkClick }>
+            <a className="style-individual-link" tabIndex={ 0 } onClick={ onLinkClick } onKeyDown={ onLinkClick }>
                 Link
             </a>
             <a className="style-view-source" href={style.href + '?source=1'}>

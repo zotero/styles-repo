@@ -225,7 +225,8 @@ h2 {
 	cursor: pointer;
 	text-decoration: underline;
 
-	li:hover & {
+	li:hover &,
+	li:focus-within & {
 		display: inline;
 	}
 }
