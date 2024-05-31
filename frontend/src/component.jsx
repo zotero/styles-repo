@@ -408,12 +408,16 @@ const App = () => {
                             <ul className="formats-list">
                                 {state.filtered.formats.map(format => (
                                     <li
-                                        data-value={format}
                                         onClick={handleFormatClick}
                                         key={format}
-                                        className={state.query.format === format ? 'format-active' : 'a'}
                                     >
-                                        {format}
+                                        <button
+                                            aria-pressed={state.query.format === format}
+                                            data-value={format}
+                                            className={state.query.format === format ? 'format-active' : ''}
+                                        >
+                                            {format}
+                                        </button>
                                     </li>
                                 ))}
                             </ul>
@@ -425,12 +429,16 @@ const App = () => {
                             <ul className="fields-list">
                                 {state.filtered.fields.map(field => (
                                     <li
-                                        data-value={field}
                                         onClick={handleFieldClick}
                                         key={field}
-                                        className={state.query.fields.includes(field) ? 'field-active' : 'a'}
                                     >
-                                        {field}
+                                        <button
+                                            aria-pressed={state.query.fields.includes(field)}
+                                            className={state.query.fields.includes(field) ? 'field-active' : ''}
+                                            data-value={field}
+                                        >
+                                            {field}
+                                        </button>
                                     </li>
                                 ))}
                             </ul>
