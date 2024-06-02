@@ -287,7 +287,7 @@ const App = () => {
             clearTimeout(previewTimeout.current);
         }
 
-        if(e.relatedTarget.closest('.style-tooltip')) {
+        if(e.relatedTarget?.closest('.style-tooltip')) {
             return;
         }
 
