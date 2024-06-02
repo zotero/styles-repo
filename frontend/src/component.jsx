@@ -54,7 +54,7 @@ const fetchStyles = async (dispatch) => {
 
             if (process.env.NODE_ENV === 'development') {
                 let t1 = performance.now();
-                console.log('Fetching & processing styles took ' + (t1 - t0) + ' ms.');
+                console.log('Fetching & processing styles took ' + (t1 - t0).toFixed(2) + ' ms.');
             }
         } else {
             dispatch({ type: 'FETCH_STYLES_ERROR' });
@@ -95,6 +95,10 @@ const fetchPreview = async (style, dispatch) => {
     }
 }
 
+if (process.env.NODE_ENV === 'development') {
+    var beginSearchTime = null;
+}
+
 const reducer = (state, action) => {
     switch (action.type) {
         case 'BEGIN_FETCH_STYLES':
@@ -122,6 +126,9 @@ const reducer = (state, action) => {
                 workerReady: true,
             }
         case 'BEGIN_SEARCH':
+            if (process.env.NODE_ENV === 'development') {
+                beginSearchTime = performance.now()
+            }
             return {
                 ...state,
                 searching: true,
@@ -140,6 +147,11 @@ const reducer = (state, action) => {
                 }
             }
         case 'COMPLETE_SEARCH':
+            if (process.env.NODE_ENV === 'development' && beginSearchTime) {
+                let completeSearchTime = performance.now();
+                console.log('Searching and applying DOM changes took ' + (completeSearchTime - beginSearchTime).toFixed(2) + ' ms.');
+                beginSearchTime = null;
+            }
             return {
                 ...state,
                 searching: false,
