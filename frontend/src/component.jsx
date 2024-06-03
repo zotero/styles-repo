@@ -1,4 +1,6 @@
 import { Fragment } from 'preact';
+import { useMemo } from 'preact/hooks';
+
 import SearchWorker from 'web-worker:./search.worker.js';
 import { useCallback, useEffect, useReducer, useRef } from 'preact/hooks';
 import { computePosition, flip, shift } from '@floating-ui/dom';
@@ -15,7 +17,7 @@ const initialState = {
     fields: [],
     formats: [],
     filtered: {
-        styles: [],
+        queryMatches: null,
         fields: [],
         formats: [],
     },
@@ -113,6 +115,7 @@ const reducer = (state, action) => {
                 styles: action.styles,
                 fields: action.fields,
                 formats: action.formats,
+                count: action.styles.length,
             }
         case 'FETCH_STYLES_ERROR':
             return {
@@ -131,6 +134,7 @@ const reducer = (state, action) => {
             }
             return {
                 ...state,
+                skipDebounce: false,
                 searching: true,
             }
         // splitting COMPLETE_SEARCH into two actions so that "Searching..." is kept
@@ -139,9 +143,9 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 initialQueryExecuted: true,
-                count: (action.filtered.styles ?? state.styles).length,
+                count: action.filtered.count ?? state.styles.length,
                 filtered: {
-                    styles: action.filtered.styles ?? state.styles,
+                    queryMatches: action.filtered.queryMatches,
                     fields: action.filtered.fields ?? state.fields,
                     formats: action.filtered.formats ?? state.formats,
                 }
@@ -160,6 +164,7 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 initialQueryExecuted: true,
+                skipDebounce: action.query.skipDebounce,
                 query: {
                     ...state.query,
                     ...action.query,
@@ -213,9 +218,15 @@ const App = () => {
     const timeout = useRef(null);
     const searchInput = useRef(null);
     const previewTimeout = useRef(null);
+    const isPasted = useRef(false);
+
+    const handleSearchPaste = useCallback(() => {
+        isPasted.current = true;
+    }, []);
 
     const handleSearchInput = useCallback((e) => {
-            dispatch({ type: 'QUERY', query: { search: e.target.value } });
+        dispatch({ type: 'QUERY', query: { search: e.target.value, skipDebounce: isPasted.current } });
+        isPasted.current = false;
     }, []);
 
     const handleUniqueClick = useCallback((e) => {
@@ -252,9 +263,9 @@ const App = () => {
                 break;
             case 'COMPLETE_SEARCH': {
                 dispatch({ type: 'APPLY_SEARCH', filtered: payload });
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     dispatch({ type: 'COMPLETE_SEARCH' });
-                }, 0);
+                });
                 break;
             }
             default:
@@ -269,7 +280,7 @@ const App = () => {
         e.preventDefault();
         const styleName = e.target.closest('li').dataset.name;
         if (styleName) {
-            dispatch({ type: 'QUERY', query: { search: `id:${styleName}` } });
+            dispatch({ type: 'QUERY', query: { search: `id:${styleName}`, skipDebounce: true } });
         }
     }, []);
 
@@ -313,9 +324,9 @@ const App = () => {
             searchWorker.postMessage(['LOAD', { styles: state.styles }]);
             if (isEmptyQuery(state.query)) {
                 dispatch({ type: 'APPLY_SEARCH', filtered: {} });
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     dispatch({ type: 'COMPLETE_SEARCH' });
-                }, 0);
+                });
             }
         }
     }, [state.fetching, state.query, state.styles, state.workerReady]);
@@ -338,12 +349,16 @@ const App = () => {
             const runSearch = () => {
                 dispatch({ type: 'BEGIN_SEARCH' });
                 if (!isEmptyQuery(state.query)) {
-                    searchWorker.postMessage(['SEARCH', { query: state.query }]);
+                    requestAnimationFrame(() => {
+                        searchWorker.postMessage(['SEARCH', { query: state.query }]);    
+                    });
                 } else {
-                    dispatch({ type: 'APPLY_SEARCH', filtered: { styles: state.styles } });
-                    setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        dispatch({ type: 'APPLY_SEARCH', filtered: { styles: state.styles } });
+                    }); 
+                    requestAnimationFrame(() => {
                         dispatch({ type: 'COMPLETE_SEARCH' });
-                    }, 0);
+                    });
                 }
                 updateHistoryFromQuery(state.query);
             };
@@ -353,13 +368,14 @@ const App = () => {
             }
 
             // debounce search for typing, but don't debounce for other changes
-            if (state.query.search.length && state.query.search !== prevQuery.search) {
+            if (!state.skipDebounce && state.query.search.length && state.query.search !== prevQuery.search) {
                 timeout.current = setTimeout(runSearch, 200);
             } else {
                 runSearch();
             }
+            
         }
-    }, [prevQuery, state.query, state.styles, state.workerReady]);
+    }, [prevQuery, state.query, state.skipDebounce, state.styles, state.workerReady]);
 
     useEffect(() => {
         if (state.showPreviewFor && state.showPreviewFor !== prevShowPreviewFor) {
@@ -387,7 +403,7 @@ const App = () => {
             updateTooltipPosition(anchor, tooltip);
         }
     }, [prevPreviewFetched, state.lastPreviewFetched, state.showPreviewFor]);
-        
+
     return (
         <Fragment>
             <div className="search-pane">
@@ -404,6 +420,7 @@ const App = () => {
                             value={state.query.search}
                             onInput={handleSearchInput}
                             onChange={handleSearchInput}
+                            onPaste={handleSearchPaste}
                         />
                     </p>
                     <p>
@@ -471,7 +488,7 @@ const App = () => {
                     }
                 </div>
                 <ul className="style-list">
-                    {state.filtered.styles.map((style, index) => (
+                    {state.styles.map((style, index) => (
                         <StyleItem
                             onLinkClick={ handleStyleItemLinkClick }
                             onMouseEnter={ handleMouseEnter }
@@ -479,6 +496,7 @@ const App = () => {
                             key={style.name}
                             style={style}
                             index={index}
+                            visible={state.filtered.queryMatches?.[index] ?? true}
                         />
                     ))}
                 </ul>
@@ -492,24 +510,33 @@ const App = () => {
     );
 }
 
-const StyleItem = ({ style, onMouseEnter, onMouseLeave, onLinkClick }) => {
+const StyleItem = ({ style, onMouseEnter, onMouseLeave, onLinkClick, visible }) => {
+    // memoize content as it never changes (we only show/hide the item based on search results)
+    const content = useMemo(() => {
+        return (
+            <Fragment>
+                <a
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                    className="title"
+                    href={style.href}
+                >
+                    {style.title}
+                </a>
+                <span className="metadata">({style.updated})</span>
+                <a className="style-individual-link" tabIndex={0} onClick={onLinkClick} onKeyDown={onLinkClick}>
+                    Link
+                </a>
+                <a className="style-view-source" href={style.href + '?source=1'}>
+                    Source
+                </a>
+            </Fragment>
+        );
+    }, [onLinkClick, onMouseEnter, onMouseLeave, style.href, style.title, style.updated]);
+
     return (
-        <li data-name={ style.name }>
-            <a
-                onMouseEnter={ onMouseEnter }
-                onMouseLeave={ onMouseLeave }
-                className="title"
-                href={style.href}
-            >
-                {style.title}
-            </a>
-            <span className="metadata">({style.updated})</span>
-            <a className="style-individual-link" tabIndex={ 0 } onClick={ onLinkClick } onKeyDown={ onLinkClick }>
-                Link
-            </a>
-            <a className="style-view-source" href={style.href + '?source=1'}>
-                Source
-            </a>
+        <li style={{ display: visible ? 'block' : 'none' }} data-name={ style.name }>
+            { content }
         </li>
     );
 };

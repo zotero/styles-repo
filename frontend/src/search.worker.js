@@ -17,7 +17,6 @@ self.addEventListener('message', function (ev) {
 
 
 function search(query) {
-    var styles;
     var formats;
     var fields;
     var queryKeys = Object.keys(query),
@@ -55,8 +54,8 @@ function search(query) {
             querySearch = querySearch.trim();
         }
     }
-
-    styles = allStyles.filter(item => {
+    let count = 0;
+    let queryMatches = allStyles.map(item => {
         var visible = true;
 
         if (typeof queryId !== 'undefined') {
@@ -89,10 +88,11 @@ function search(query) {
 
             formats.add(item.categories.format);
         }
-
+        if(visible) {
+            count++;
+        }
         return visible;
-
     });
 
-    return { styles, formats: Array.from(formats).sort(), fields: Array.from(fields).sort() };
+    return { count, queryMatches, formats: Array.from(formats).sort(), fields: Array.from(fields).sort() };
 }

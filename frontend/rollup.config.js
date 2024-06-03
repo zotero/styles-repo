@@ -24,7 +24,9 @@ const config = {
             if (id.includes('core-js/')) {
                 return true;
             }
-            return false;
+            if (id.includes('preact/debug')) {
+                return true;
+            }
         }
     },
     plugins: [
@@ -60,6 +62,7 @@ if (process.env.DEBUG) {
 
 if (isProduction) {
     config.plugins.push(terser({ safari10: true }));
+    config.external.push('preact/debug'); //exclude preact-debug from production
 }
 
 export default config;
