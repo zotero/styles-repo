@@ -42,35 +42,36 @@
 			]
 		}
 	}, {
-		"id": 3884,
-		"type": "webpage",
-		"title": "The secret Tesla Motors master plan (just between you and me)",
-		"container-title": "Tesla Blog",
-		"abstract": "Background: My day job is running a space transportation company called SpaceX, but on the side I am the chairman of Tesla Motors and help formulate the business and product strategy with Martin and the rest of the team. I have also been Tesla Motor&#39;s primary funding source from when the company was just three people and a business plan.",
-		"URL": "https://www.tesla.com/blog/secret-tesla-motors-master-plan-just-between-you-and-me",
-		"author": [{
-			"family": "Musk",
-			"given": "Elon"
-		}],
-		"issued": {
-			"date-parts": [
-				[
-					"2006",
-					8,
-					2
-				]
-			]
-		},
+		"id": "http://zotero.org/users/452233/items/MD9WND3X",
+		"type": "post-weblog",
+		"container-title": "Mashable Blog",
+		"title": "Lesbian couple paints house rainbow to troll homophobic neighbors",
+		"title-short": "Homophobic neighbors",
+		"URL": "https://mashable.com/article/homophobia-couple-rainbow-house-troll/?europe=true&utm_cid=hp-r-1",
+		"author": [
+			{
+				"family": "Dockray",
+				"given": "Heather"
+			}
+		],
 		"accessed": {
 			"date-parts": [
 				[
-					"2016",
-					9,
-					29
+					"2018",
+					1,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2018",
+					1,
+					9
 				]
 			]
 		}
-
 	}, {
 		"id": 3881,
 		"type": "chapter",
@@ -135,7 +136,7 @@
 		"citationItems": [{
 			"id": 3886
 		}, {
-			"id": 3884
+			"id": "http://zotero.org/users/452233/items/MD9WND3X"
 		}, {
 			"id": 3881
 		}, {
