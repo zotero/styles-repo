@@ -1,13 +1,4 @@
-/**
- * Finds the first element that pasess function test by testing the element itself
- * and traversing up
- * @param  {HTMLElement}   el 	- A DOM element from which tracersing begins
- * @param  {Function} fn 		- Function that tests if element is suitable
- * @return {HTMLElement}		- First element that passes the test
- */
-export function closest(el, fn) {
-	return el && (fn(el) ? el : closest(el.parentNode, fn));
-}
+import { useEffect, useRef } from 'preact/hooks';
 
 /**
  * Port of PHP's number_format()
@@ -32,4 +23,16 @@ export function numberFormat(number, decimals = 0, dec_point, thousands_sep) {
 	var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
 
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+}
+
+export const usePrevious = value => {
+	const ref = useRef();
+	useEffect(() => {
+		ref.current = value;
+	});
+	return ref.current;
+}
+
+export const isEmptyQuery = (query) => {
+	return !query.search.length && !query.fields.length && query.format === null && query.dependent === null && query.id === null;
 }
