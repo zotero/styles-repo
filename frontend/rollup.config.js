@@ -4,23 +4,36 @@ import filesize from 'rollup-plugin-filesize';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import sizes from 'rollup-plugin-sizes';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 
 const isProduction = process.env.NODE_ENV?.startsWith('prod');
 
 const config = {
-    input: './src/zsr.js',
+    input: './src/zsr.jsx',
     output: {
-        name: 'ZSR', 
+        name: 'ZSR',
         dir: './build/js',
-        format: 'umd',
+        format: 'iife',
         sourcemap: !isProduction,
         compact: isProduction
     },
     treeshake: {
-        moduleSideEffects: 'no-external',
+        preset: 'smallest',
+        moduleSideEffects: (id) => {
+            if (id.includes('core-js/')) {
+                return true;
+            }
+            if (id.includes('preact/debug')) {
+                return true;
+            }
+        }
     },
     plugins: [
+        webWorkerLoader({
+            targetPlatform: 'browser',
+            skipPlugins: ['resolve', 'commonjs', 'replace', 'babel', 'sizes', 'filesize']
+        }),
         resolve({
             preferBuiltins: false,
             mainFields: ['browser', 'module', 'main'],
@@ -32,8 +45,11 @@ const config = {
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'development'),
         }),
         babel({
-            exclude: "node_modules/**",
-            extensions: ['.js', '.jsx'],
+            include: [
+                'src/**',
+                // modules below need re-transpiled for compatibility with Safari 10
+                'node_modules/@floating-ui/**',
+            ],
             babelHelpers: 'bundled'
         }),
         filesize({ showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG }),
@@ -46,6 +62,7 @@ if (process.env.DEBUG) {
 
 if (isProduction) {
     config.plugins.push(terser({ safari10: true }));
+    config.external.push('preact/debug'); //exclude preact-debug from production
 }
 
 export default config;
